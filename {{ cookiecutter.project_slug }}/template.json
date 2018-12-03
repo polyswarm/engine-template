@@ -1,0 +1,67 @@
+{# Note: raw escapes are to force cookiecutter to ignore that templating #}
+{
+  "variables": {
+{% raw %}
+    "aws_profile": "{{ env `AWS_PROFILE`}}",
+{% endraw %}
+    "winrm_password": "fixMeOmg",
+    "_comment": "todo variabilize below for prod/stage?",
+
+    "owner": "{{ cookiecutter.aws_account_for_ami }}"
+  },
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "region": "us-east-1",
+      "source_ami_filter": {
+        "filters": {
+          "virtualization-type": "hvm",
+          "name": "polyswarm-client-windows *",
+          "root-device-type": "ebs"
+        },
+        "owners": [
+{% raw %}
+          "{{ user `owner` }}"
+{% endraw %}
+        ],
+        "most_recent": true
+      },
+      "instance_type": "t2.large",
+{% raw %}
+      "ami_name": "polyswarm-engine-{{ }} {{timestamp}}",
+
+      "user_data_file": "./packer/setup_winrm_cr.txt",
+      "communicator": "winrm",
+      "winrm_username": "Administrator",
+      "winrm_use_ssl": true,
+      "winrm_insecure": true,
+      "ami_users": ["{{ user `owner` }}",  "077282062506"]
+    }
+  ],
+{% endraw %}
+  "provisioners": [
+        // this runs local on windows/linux CI builder
+    {
+      "type": "shell-local",
+      "command": "pip3 wheel . -w packer/wheels"
+    },
+
+    {
+      "destination": "c:\\{{ cookiecutter.engine_name }}",
+      "source": "./packer/wheels",
+      "type": "file"
+    },
+    {
+      "type": "powershell",
+      "script":"./packer/installengine.ps1"
+    },
+    {
+      "type": "powershell",
+      "inline": [
+        "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Scripts\\SendWindowsIsReady.ps1 -Schedule",
+        "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Scripts\\InitializeInstance.ps1 -Schedule",
+        "C:\\ProgramData\\Amazon\\EC2-Windows\\Launch\\Scripts\\SysprepInstance.ps1 -NoShutdown"
+      ]
+    }
+  ]
+}
