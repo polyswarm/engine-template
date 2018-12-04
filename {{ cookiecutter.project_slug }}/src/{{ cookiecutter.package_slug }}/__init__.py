@@ -17,7 +17,8 @@ PATH_SCANNER_BINARY = os.getenv(
         "..",
         "..",
         "pkg",
-        "{{ cookiecutter.engine_name_slug|capitalize }}.exe")
+        {% if cookiecutter.platform == "docker-linux" %}"{{ cookiecutter.engine_name_slug|capitalize }}.sh"){% endif %}
+        {% if cookiecutter.platform == "windows" %}"{{ cookiecutter.engine_name_slug|capitalize }}.exe"){% endif %}
     )
 
 

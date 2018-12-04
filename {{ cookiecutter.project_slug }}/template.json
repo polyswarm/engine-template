@@ -4,9 +4,7 @@
 {% raw %}
     "aws_profile": "{{ env `AWS_PROFILE`}}",
 {% endraw %}
-    "winrm_password": "fixMeOmg",
-    "_comment": "todo variabilize below for prod/stage?",
-
+    "winrm_password": "YOUR_PASSWORD",
     "owner": "{{ cookiecutter.aws_account_for_ami }}"
   },
   "builders": [
@@ -16,7 +14,7 @@
       "source_ami_filter": {
         "filters": {
           "virtualization-type": "hvm",
-          "name": "polyswarm-client-windows *",
+          "name": "polyswarm-engine *",
           "root-device-type": "ebs"
         },
         "owners": [
@@ -29,23 +27,23 @@
       "instance_type": "t2.large",
 {% raw %}
       "ami_name": "polyswarm-engine-{{ }} {{timestamp}}",
-
+{% endraw %}
       "user_data_file": "./packer/setup_winrm_cr.txt",
       "communicator": "winrm",
       "winrm_username": "Administrator",
       "winrm_use_ssl": true,
       "winrm_insecure": true,
-      "ami_users": ["{{ user `owner` }}",  "077282062506"]
+{% raw %}
+      "ami_users": ["{{ user `owner` }}",  "012334567890"]
+{% endraw %}
     }
   ],
-{% endraw %}
   "provisioners": [
         // this runs local on windows/linux CI builder
     {
       "type": "shell-local",
       "command": "pip3 wheel . -w packer/wheels"
     },
-
     {
       "destination": "c:\\{{ cookiecutter.engine_name }}",
       "source": "./packer/wheels",

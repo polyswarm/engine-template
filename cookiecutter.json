@@ -1,7 +1,7 @@
 {
   "engine_name": "myengine",
   "engine_name_slug": "{{ cookiecutter.engine_name.lower().replace(' ', '').replace('.', '').replace('-', '').replace('_', '') }}",
-  "project_slug": "microengine-{{ cookiecutter.engine_name_slug }}",
+  "project_slug": "engine-{{ cookiecutter.engine_name_slug }}",
   "author_org": "PolySwarm",
   "author_org_slug": "{{ cookiecutter.author_org.lower().replace(' ', '').replace('.', '').replace('-', '').replace('_', '') }}",
   "package_slug": "{{ cookiecutter.author_org_slug }}_{{ cookiecutter.engine_name_slug }}",
