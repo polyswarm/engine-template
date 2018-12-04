@@ -5,7 +5,10 @@ WORKDIR /usr/src/app
 RUN apt-get update && apt-get install -y unzip
 
 COPY . .
-# todo edit in here if you need a backend
+
+# CUSTOMIZE_HERE
+# This is where you would copy you scanner backend binary into the Docker image, e.g.:
+# COPY myscanner.bin .
 
 RUN set -x && pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir .
