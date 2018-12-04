@@ -47,7 +47,9 @@ class Scanner(AbstractScanner):
             |   - **verdict** (*bool*): Whether this artifact is malicious or not
             |   - **metadata** (*str*): Optional metadata about this artifact
         """
-        pass
+        # CUSTOMIZE_HERE
+        # This is where you implement your scanner's logic.
+        raise NotImplementedError
 
 
 class Microengine(AbstractMicroengine):
