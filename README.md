@@ -14,7 +14,7 @@ pip install cookiecutter
 
 2. Start a new engine project:
 ```bash
-cookiecutter git@github.com:polyswarm/engine-template
+cookiecutter https://github.com/polyswarm/engine-template
 ```
 
 # Prompts
