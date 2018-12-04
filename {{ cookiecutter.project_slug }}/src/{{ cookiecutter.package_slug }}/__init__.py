@@ -66,7 +66,6 @@ class Microengine(AbstractMicroengine):
         """
         logger.info("Loading {{ cookiecutter.engine_name }} scanner...")
         scanner = Scanner()
-        # todo is this the right place to wait for backend to be up?
         {% if cookiecutter.has_backend == "true" %}
         scanner.wait_for_backend()
         {% endif %}
