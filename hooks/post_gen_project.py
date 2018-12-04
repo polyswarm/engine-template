@@ -16,15 +16,23 @@ def remove_directory(dirpath):
     shutil.rmtree(os.path.join(PROJECT_DIRECTORY, dirpath))
 
 
+def remove_windows_content():
+    remove_directory("packer")
+    remove_file("template.json")
+
+
+def remove_linux_content():
+    remove_directory("docker")
+    remove_file(".dockerignore")
+    remove_file("tox.ini")
+
+
 if __name__ == '__main__':
 
     if platform == "docker-linux":
-        # todo remove windows specific folders/files
-
-
-        pass
+        # remove windows specific folders/files
+        remove_windows_content()
 
     if platform == "windows":
-        # todo remove linux specific folders/files
-
-        pass
+        # remove linux specific folders/files
+        remove_linux_content()
