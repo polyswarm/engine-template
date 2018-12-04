@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   {% if cookiecutter.has_backend == "true" %}
-  {{cookiecutter.engine_name_slug}}backend:
+  {{ cookiecutter.engine_name_slug }}backend:
     image: "{{ cookiecutter.project_slug }}-backend"
     ports:
       # unholy fwd to socat
