@@ -25,7 +25,6 @@ def remove_windows_content():
 def remove_linux_content():
     remove_directory("docker")
     remove_file(".dockerignore")
-    remove_file("tox.ini")
 
 
 if __name__ == '__main__':
