@@ -38,6 +38,7 @@ class Scanner(AbstractScanner):
         Args:
             guid (str): GUID of the bounty under analysis, use to track artifacts in the same bounty
             content (bytes): Content of the artifact to be scan
+            chain (str): Chain we are operating on
         Returns:
             Tuple(bool, bool, str): Tuple of bit, verdict, metadata
 
@@ -57,14 +58,15 @@ class Microengine(AbstractMicroengine):
         {{ cookiecutter.engine_name }}
     """
 
-    def __init__(self, client, testing=0, scanner=None, chains={'side'}):
+    def __init__(self, client, testing=0, scanner=None, chains=None):
         """
         Initialize {{ cookiecutter.engine_name }}
 
-        :param client:
-        :param testing:
-        :param scanner:
-        :param chains:
+        Args:
+            client ('Client'): Client to use
+            testing (int): How many test bounties to respond to (shutdown once this is reached) (0 is no limit)
+            scanner ('Scanner'): Scanner we are using to process artifacts
+            chains (set[str]): Chain we are operating on
         """
         logger.info("Loading {{ cookiecutter.engine_name }} scanner...")
         scanner = Scanner()
