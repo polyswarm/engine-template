@@ -19,7 +19,6 @@ def remove_directory(dirpath):
 def remove_windows_content():
     remove_directory("packer")
     remove_file("template.json")
-    remove_file("microengine_keyfile")
 
 
 def remove_linux_content():
