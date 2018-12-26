@@ -1,0 +1,35 @@
+version: '3.4'
+services:
+  {% if cookiecutter.has_backend == "true" %}
+  {{ cookiecutter.engine_name_slug }}backend:
+    image: "{{ cookiecutter.project_slug }}-backend"
+    ports:
+      # unholy fwd to socat
+      - 8888:8080
+#    shm_size: "1G"
+  {% endif %}
+ 
+  test_engine_{{ cookiecutter.engine_name_slug }}:
+    image: "{{ cookiecutter.project_slug }}"
+    {% if cookiecutter.has_backend == "true" %}
+    depends_on:
+      - {{ cookiecutter.project_slug }}backend
+    {% endif %}
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KEYFILE=docker/microengine_keyfile
+      - PASSWORD=password
+    command:
+      - "dockerize"
+      - "-wait"
+      - "tcp://polyswarmd:31337"
+      - "-timeout"
+      - "1000s"
+      - "microengine"
+      - "--polyswarmd-addr"
+      - "polyswarmd:31337"
+      - "--insecure-transport"
+      - "--testing"
+      - "10"
+      - "--chains"
+      - "side"
