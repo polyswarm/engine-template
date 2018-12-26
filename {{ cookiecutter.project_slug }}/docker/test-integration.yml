@@ -33,3 +33,9 @@ services:
       - "10"
       - "--chains"
       - "side"
+
+networks:
+  default:
+    external:
+      name: orchestration_default
+
