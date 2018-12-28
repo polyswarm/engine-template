@@ -33,6 +33,8 @@ services:
       - "10"
       - "--chains"
       - "side"
+      - "--backend"
+      - "{{ cookiecutter.package_slug }}"
 
 networks:
   default:
