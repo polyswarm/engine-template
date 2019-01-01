@@ -71,10 +71,21 @@ class Microengine(AbstractMicroengine):
         logger.info("Loading {{ cookiecutter.engine_name }} scanner...")
         scanner = Scanner()
         {% if cookiecutter.has_backend == "true" %}
-        scanner.wait_for_backend()
+        client.on_run.register(self.handle_run)
         {% endif %}
         super().__init__(client, testing, scanner, chains)
+    {% if cookiecutter.has_backend == "true" %}
+    async def handle_run(self, chain):
+        """
+        Often you'll want to use asyncio code in your wait_for_backend() method.
+        Thus, you need to ensure it is called AFTER the asyncio loop starts.
+        Registering this method with client.on_run.register() ensures it is called immediately when the loop starts.
 
+        :param chain:
+        :return:
+        """
+        await self.scanner.wait_for_backend()
+    {% endif %}
     def bid(self, guid, chain):
         """
         Args:
