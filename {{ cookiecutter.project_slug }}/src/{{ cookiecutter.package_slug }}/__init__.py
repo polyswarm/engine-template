@@ -28,7 +28,7 @@ class Scanner(AbstractScanner):
     def __init__(self):
         super(Scanner, self).__init__()
     {% if cookiecutter.has_backend == "true" %}
-    def wait_for_backend(self):
+    async def wait_for_backend(self):
         # CUSTOMIZE_HERE
         # If you scanner has a disjoint backend, you'll want to properly detect when that backend is available.
         raise NotImplementedError
