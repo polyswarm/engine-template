@@ -40,5 +40,5 @@ async def test_scan_random_mal_not():
 
     for t in [True, False]:
         mal_md, mal_content = DummyMalwareRepoClient().get_random_file(malicious_filter=t)
-        bit, is_infected, infected_str = await scanner.scan("nocare", mal_content, "home")
-        assert is_infected == t
+        result = await scanner.scan("nocare", mal_content, "home")
+        assert result.verdict == t

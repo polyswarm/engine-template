@@ -1,4 +1,4 @@
-polyswarm-client==1.2.0
+polyswarm-client==1.2.1
 git+https://github.com/polyswarm/malwarerepoclient.git#egg=malwarerepoclient
 pytest==3.9.2
 pytest-asyncio==0.9.0
