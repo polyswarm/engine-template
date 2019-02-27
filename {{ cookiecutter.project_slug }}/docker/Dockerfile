@@ -1,5 +1,8 @@
 FROM polyswarm/polyswarm-client
 
+# remove polyswarm client data that should already be installed
+RUN rm -Rf /usr/src/app
+
 WORKDIR /usr/src/app
 
 RUN apt-get update && apt-get install -y unzip
