@@ -1,3 +1,5 @@
+# using our ethash fork until fixes for windows builds are upstream.
+git+https://github.com/polyswarm/ethash.git#egg=pyethash
 polyswarm-client==1.2.4
 git+https://github.com/polyswarm/malwarerepoclient.git#egg=malwarerepoclient
 pytest==3.9.2
