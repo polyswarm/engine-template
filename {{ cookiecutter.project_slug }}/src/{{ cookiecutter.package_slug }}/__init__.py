@@ -82,7 +82,7 @@ class Microengine(AbstractMicroengine):
     {% endif %}
     async def bid(self, guid, mask, verdicts, confidences, metadatas, chain):
         """
-         Args:
+        Args:
             guid (str): GUID of the bounty under analysis, use to correlate with artifacts in the same bounty
             masks (list[bool]): mask for the from scanning the bounty files
             verdicts (list[bool]): scan verdicts from scanning the bounty files
@@ -90,7 +90,7 @@ class Microengine(AbstractMicroengine):
             metadatas (list[str]): metadata blurbs from scanning the bounty files
             chain (str): Chain we are operating on
         Returns:
-            int: Amount of NCT to bid in base NCT units (10 ^ -18)
+            (int): Amount of NCT to bid in base NCT units (10 ^ -18)
         """
         # CUSTOMIZE_HERE
         # You'll want to drop in your own bid amount logic here.
