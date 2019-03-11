@@ -80,10 +80,14 @@ class Microengine(AbstractMicroengine):
         """
         await self.scanner.wait_for_backend()
     {% endif %}
-    def bid(self, guid, chain):
+    async def bid(self, guid, mask, verdicts, confidences, metadatas, chain):
         """
         Args:
             guid (str): GUID of the bounty under analysis, use to correlate with artifacts in the same bounty
+            masks (list[bool]): mask for the from scanning the bounty files
+            verdicts (list[bool]): scan verdicts from scanning the bounty files
+            confidences (list[float]): Measure of confidence of verdict per artifact ranging from 0.0 to 1.0
+            metadatas (list[str]): metadata blurbs from scanning the bounty files
             chain (str): Chain we are operating on
         Returns:
             (int): Amount of NCT to bid in base NCT units (10 ^ -18)
@@ -91,4 +95,4 @@ class Microengine(AbstractMicroengine):
         # CUSTOMIZE_HERE
         # You'll want to drop in your own bid amount logic here.
         # Default logic is to always place the minimum bid amount.
-        return self.client.bounties.parameters[chain]['assertion_bid_minimum']
+        return await self.client.bounties.parameters[chain].get('assertion_bid_minimum')
