@@ -6,6 +6,7 @@ import os
 
 from polyswarmclient.abstractmicroengine import AbstractMicroengine
 from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
+from polyswarmclient.config import init_logging
 
 logger = logging.getLogger(__name__)  # Init logger
 
@@ -62,6 +63,7 @@ class Microengine(AbstractMicroengine):
             scanner ('Scanner'): Scanner we are using to process artifacts
             chains (set[str]): Chain we are operating on
         """
+        init_logging('json', logging.DEBUG)
         logger.info("Loading {{ cookiecutter.engine_name }} scanner...")
         scanner = Scanner()
         {% if cookiecutter.has_backend == "true" %}
