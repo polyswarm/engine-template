@@ -63,7 +63,7 @@ class Microengine(AbstractMicroengine):
             scanner ('Scanner'): Scanner we are using to process artifacts
             chains (set[str]): Chain we are operating on
         """
-        init_logging('json', logging.DEBUG)
+        init_logging([__name__], log_format='json', loglevel=logging.DEBUG)
         logger.info("Loading {{ cookiecutter.engine_name }} scanner...")
         scanner = Scanner()
         {% if cookiecutter.has_backend == "true" %}
