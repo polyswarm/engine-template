@@ -5,7 +5,7 @@
     "aws_profile": "{{ env `AWS_PROFILE`}}",
 {% endraw %}
     "winrm_password": "YOUR_PASSWORD",
-    "owner": "{{ cookiecutter.aws_account_for_ami }}"
+    "owner": "{{ cookiecutter.windows__aws_account_for_ami }}"
   },
   "builders": [
     {
@@ -45,7 +45,7 @@
       "command": "pip3 wheel . -w packer/wheels"
     },
     {
-      "destination": "c:\\{{ cookiecutter.engine_name }}",
+      "destination": "c:\\{{ cookiecutter.participant_name }}",
       "source": "./packer/wheels",
       "type": "file"
     },

@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import asyncio
 import pytest
+
+{% if cookiecutter.participant_type == "microengine" %}
+
 import sys
 
 from malwarerepoclient.client import DummyMalwareRepoClient
@@ -34,7 +38,7 @@ async def test_scan_random_mal_not():
 
     """
     scanner = Scanner()
-    {% if cookiecutter.has_backend == "true" %}
+    {% if cookiecutter.microengine__has_backend == "true" %}
     await scanner.wait_for_backend()
     {% endif %}
 
@@ -42,3 +46,19 @@ async def test_scan_random_mal_not():
         mal_md, mal_content = DummyMalwareRepoClient().get_random_file(malicious_filter=t)
         result = await scanner.scan("nocare", mal_content, "home")
         assert result.verdict == t
+
+{% endif %}
+
+{% if cookiecutter.participant_type == "ambassador" %}
+
+# TODO: implement unit tests for ambassadors
+
+@pytest.mark.asyncio
+async def todo():
+    """
+    Run scanner against one malicious file (EICAR) and one non-malicious file.
+
+    """
+    assert True == True
+
+{% endif %}

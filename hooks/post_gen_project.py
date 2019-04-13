@@ -29,7 +29,7 @@ def remove_linux_content():
 
 if __name__ == '__main__':
 
-    if platform == "docker-linux":
+    if platform == "linux":
         # remove windows specific folders/files
         remove_windows_content()
 
