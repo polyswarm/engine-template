@@ -42,6 +42,7 @@ services:
       - "{{ cookiecutter.package_slug }}"
 
   test_deposit-{{ cookiecutter.participant_name_slug }}:
+    image: "polyswarm/polyswarm-client"
     environment:
       - PYTHONUNBUFFERED=1
       - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
