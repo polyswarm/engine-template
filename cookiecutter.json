@@ -2,7 +2,7 @@
   "participant_type": ["microengine", "ambassador"],
   "platform": ["linux", "windows"],
 
-  "participant_name": "mymicroengine",
+  "participant_name": "myfirstparticipant",
   "participant_name_slug": "{{ cookiecutter.participant_name.lower().replace(' ', '').replace('.', '').replace('-', '').replace('_', '') }}",
 
   "project_slug": "{{ cookiecutter.participant_type }}-{{ cookiecutter.participant_name_slug }}",
