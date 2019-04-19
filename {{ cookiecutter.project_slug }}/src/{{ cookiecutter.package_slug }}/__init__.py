@@ -1,17 +1,18 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-{% if cookiecutter.participant_type == "microengine" %}
 
-import tempfile
 import logging
 import os
 
-from polyswarmclient.abstractmicroengine import AbstractMicroengine
-from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
 from polyswarmclient.config import init_logging
 
 logger = logging.getLogger(__name__)  # Init logger
+
+{% if cookiecutter.participant_type == "microengine" %}
+
+from polyswarmclient.abstractmicroengine import AbstractMicroengine
+from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
 
 # CUSTOMIZE_HERE
 # If your engine must call out to a scan engine binary, customize this path to match the location of that backend, e.g.:
@@ -104,15 +105,7 @@ class Microengine(AbstractMicroengine):
 
 {% if cookiecutter.participant_type == "ambassador" %}
 
-import base64
-import logging
-import random
-import os
-
-from concurrent.futures import CancelledError
 from polyswarmclient.abstractambassador import AbstractAmbassador
-
-logger = logging.getLogger(__name__)
 
 BOUNTY_TEST_DURATION_BLOCKS = int(os.getenv('BOUNTY_TEST_DURATION_BLOCKS', 5))
 
