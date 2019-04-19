@@ -122,6 +122,20 @@ class Ambassador(AbstractAmbassador):
         {{ cookiecutter.participant_name }}
     """
 
+    def __init__(self, client, testing=0, chains=None, watchdog=0, submission_rate=30):
+        """
+        Initialize {{ cookiecutter.participant_name }}
+
+        Args:
+            client (`Client`): Client to use
+            testing (int): How many test bounties to respond to
+            chains (set[str]): Chain(s) to operate on
+            watchdog: interval over which a watchdog thread should verify bounty placement on-chain (in number of blocks)
+            submission_rate: if nonzero, produce a sleep in the main event loop to prevent the ambassador from overloading `polyswarmd` during testing
+        """
+        init_logging([__name__], log_format='json', loglevel=logging.DEBUG)
+        super().__init__(client, testing, chains, watchdog, submission_rate)
+
     async def generate_bounties(self, chain):
         """
         Initialize {{ cookiecutter.participant_name }}
