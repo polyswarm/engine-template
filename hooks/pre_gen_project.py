@@ -36,3 +36,11 @@ if participant_type == "microengine":
     if microengine__has_backend not in ["false", "true"]:
         print("ERROR {} is not a valid option for microengine__has_backend".format(microengine__has_backend))
         sys.exit(1)
+
+# Ambassadors only
+if participant_type == "ambassador":
+
+    if platform == "windows":
+        print("ERROR Windows ambassadors are not supported. "
+              "Please re-run cookiecutter and specify Linux as the platform.")
+        sys.exit(1)

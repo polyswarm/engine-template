@@ -7,10 +7,18 @@ import pytest
 {% if cookiecutter.participant_type == "microengine" %}
 
 import sys
-
 from malwarerepoclient.client import DummyMalwareRepoClient
 from {{ cookiecutter.package_slug }} import Microengine, Scanner
 
+{% endif %}
+
+{% if cookiecutter.participant_type == "ambassador" %}
+
+from {{ cookiecutter.package_slug }} import Ambassador
+
+{% endif %}
+
+{% if cookiecutter.participant_type == "microengine" %}
 
 @pytest.yield_fixture()
 def event_loop():
@@ -56,9 +64,8 @@ async def test_scan_random_mal_not():
 @pytest.mark.asyncio
 async def todo():
     """
-    Run scanner against one malicious file (EICAR) and one non-malicious file.
-
+    TODO
     """
-    assert True == True
+    assert True is True
 
 {% endif %}

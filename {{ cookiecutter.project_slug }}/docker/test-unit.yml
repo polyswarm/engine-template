@@ -10,7 +10,7 @@ services:
   {% endif %}
   {% endif %}
 
-  test_engine_{{ cookiecutter.participant_name_slug }}:
+  test_{{ cookiecutter.participant_name_slug }}:
     image: "{{ cookiecutter.project_slug }}"
     {% if cookiecutter.participant_type == "microengine" %}
     {% if cookiecutter.microengine__has_backend == "true" %}
