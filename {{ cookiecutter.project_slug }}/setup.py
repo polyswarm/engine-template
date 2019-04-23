@@ -5,7 +5,7 @@ from setuptools import setup
 setup(
     name='{{ cookiecutter.package_slug }}',
     version='0.1',
-    description='{{ cookiecutter.engine_name }}',
+    description='{{ cookiecutter.participant_name }}',
     author='{{ cookiecutter.author_name }}',
     author_email='{{ cookiecutter.author_email }}',
     include_package_data=True,

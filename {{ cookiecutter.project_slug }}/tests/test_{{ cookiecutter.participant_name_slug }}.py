@@ -1,12 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
 import asyncio
 import pytest
-import sys
 
+{% if cookiecutter.participant_type == "microengine" %}
+
+import sys
 from malwarerepoclient.client import DummyMalwareRepoClient
 from {{ cookiecutter.package_slug }} import Microengine, Scanner
 
+{% endif %}
+
+{% if cookiecutter.participant_type == "ambassador" %}
+
+from {{ cookiecutter.package_slug }} import Ambassador
+
+{% endif %}
+
+{% if cookiecutter.participant_type == "microengine" %}
 
 @pytest.yield_fixture()
 def event_loop():
@@ -34,7 +46,7 @@ async def test_scan_random_mal_not():
 
     """
     scanner = Scanner()
-    {% if cookiecutter.has_backend == "true" %}
+    {% if cookiecutter.microengine__has_backend == "true" %}
     await scanner.wait_for_backend()
     {% endif %}
 
@@ -42,3 +54,18 @@ async def test_scan_random_mal_not():
         mal_md, mal_content = DummyMalwareRepoClient().get_random_file(malicious_filter=t)
         result = await scanner.scan("nocare", mal_content, "home")
         assert result.verdict == t
+
+{% endif %}
+
+{% if cookiecutter.participant_type == "ambassador" %}
+
+# TODO: implement unit tests for ambassadors
+
+@pytest.mark.asyncio
+async def todo():
+    """
+    TODO
+    """
+    assert True is True
+
+{% endif %}

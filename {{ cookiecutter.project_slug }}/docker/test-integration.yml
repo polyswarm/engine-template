@@ -1,23 +1,26 @@
 version: '3.4'
 services:
-  {% if cookiecutter.has_backend == "true" %}
-  {{ cookiecutter.engine_name_slug }}backend:
+
+  {% if cookiecutter.participant_type == "microengine" %}
+  {% if cookiecutter.microengine__has_backend == "true" %}
+  {{ cookiecutter.participant_name_slug }}backend:
     image: "{{ cookiecutter.project_slug }}-backend"
     ports:
-      # unholy fwd to socat
       - 8888:8080
-#    shm_size: "1G"
+  {% endif %}
   {% endif %}
  
-  test_engine_{{ cookiecutter.engine_name_slug }}:
+  test_{{ cookiecutter.participant_name_slug }}:
     image: "{{ cookiecutter.project_slug }}"
-    {% if cookiecutter.has_backend == "true" %}
+    {% if cookiecutter.participant_type == "microengine" %}
+    {% if cookiecutter.microengine__has_backend == "true" %}
     depends_on:
       - {{ cookiecutter.project_slug }}backend
     {% endif %}
+    {% endif %}
     environment:
       - PYTHONUNBUFFERED=1
-      - KEYFILE=docker/microengine_keyfile
+      - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
       - PASSWORD=password
     command:
       - "dockerize"
@@ -25,7 +28,9 @@ services:
       - "tcp://polyswarmd:31337"
       - "-timeout"
       - "1000s"
-      - "microengine"
+      - "{{ cookiecutter.participant_type}}"
+      - "--log"
+      - "info"
       - "--polyswarmd-addr"
       - "polyswarmd:31337"
       - "--insecure-transport"
@@ -36,8 +41,28 @@ services:
       - "--backend"
       - "{{ cookiecutter.package_slug }}"
 
+  test_deposit-{{ cookiecutter.participant_name_slug }}:
+    image: "polyswarm/polyswarm-client"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
+      - PASSWORD=password
+    command:
+      - "dockerize"
+      - "-wait"
+      - "tcp://polyswarmd:31337"
+      - "-timeout"
+      - "1000s"
+      - "balancemanager"
+      - "--log"
+      - "info"
+      - "deposit"
+      - "--polyswarmd-addr"
+      - "polyswarmd:31337"
+      - "--insecure-transport"
+      - "100000"
+
 networks:
   default:
     external:
       name: orchestration_default
-

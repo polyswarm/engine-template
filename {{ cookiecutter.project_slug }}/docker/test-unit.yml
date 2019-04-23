@@ -1,18 +1,22 @@
 version: '3.4'
 services:
-  {% if cookiecutter.has_backend == "true" %}
-  {{ cookiecutter.engine_name_slug }}backend:
+
+  {% if cookiecutter.participant_type == "microengine" %}
+  {% if cookiecutter.microengine__has_backend == "true" %}
+  {{ cookiecutter.participant_name_slug }}backend:
     image: "{{ cookiecutter.project_slug }}-backend"
     ports:
-      # unholy fwd to socat
       - 8888:8080
-#    shm_size: "1G"
   {% endif %}
-  test_engine_{{ cookiecutter.engine_name_slug }}:
+  {% endif %}
+
+  test_{{ cookiecutter.participant_name_slug }}:
     image: "{{ cookiecutter.project_slug }}"
-    {% if cookiecutter.has_backend == "true" %}
+    {% if cookiecutter.participant_type == "microengine" %}
+    {% if cookiecutter.microengine__has_backend == "true" %}
     depends_on:
       - {{ cookiecutter.project_slug }}backend
+    {% endif %}
     {% endif %}
     environment:
       - PYTHON_UNBUFFERED=1

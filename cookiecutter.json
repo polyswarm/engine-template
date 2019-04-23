@@ -1,13 +1,20 @@
 {
-  "engine_name": "myengine",
-  "engine_name_slug": "{{ cookiecutter.engine_name.lower().replace(' ', '').replace('.', '').replace('-', '').replace('_', '') }}",
-  "project_slug": "microengine-{{ cookiecutter.engine_name_slug }}",
+  "participant_type": ["microengine", "ambassador"],
+  "platform": ["linux", "windows"],
+
+  "participant_name": "myfirstparticipant",
+  "participant_name_slug": "{{ cookiecutter.participant_name.lower().replace(' ', '').replace('.', '').replace('-', '').replace('_', '') }}",
+
+  "project_slug": "{{ cookiecutter.participant_type }}-{{ cookiecutter.participant_name_slug }}",
+
   "author_org": "PolySwarm",
   "author_org_slug": "{{ cookiecutter.author_org.lower().replace(' ', '').replace('.', '').replace('-', '').replace('_', '') }}",
-  "package_slug": "{{ cookiecutter.author_org_slug }}_{{ cookiecutter.engine_name_slug }}",
   "author_name": "PolySwarm Developer",
-  "author_email": "polyswarm_dev@example.com",
-  "platform": ["docker-linux", "windows"],
-  "has_backend": ["false", "true"],
-  "aws_account_for_ami": "001122334455"
+  "author_email": "info@polyswarm.io",
+
+  "package_slug": "{{ cookiecutter.author_org_slug }}_{{ cookiecutter.participant_name_slug }}",
+
+  "microengine__has_backend": ["false", "true"],
+
+  "windows__aws_account_for_ami": "001122334455"
 }
