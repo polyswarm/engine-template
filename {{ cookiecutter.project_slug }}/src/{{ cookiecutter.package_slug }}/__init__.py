@@ -5,8 +5,6 @@
 import logging
 import os
 
-from polyswarmclient.config import init_logging
-
 logger = logging.getLogger(__name__)  # Init logger
 
 {% if cookiecutter.participant_type == "microengine" %}
@@ -66,7 +64,6 @@ class Microengine(AbstractMicroengine):
             scanner ('Scanner'): Scanner we are using to process artifacts
             chains (set[str]): Chain we are operating on
         """
-        init_logging([__name__], log_format='json', loglevel=logging.DEBUG)
         logger.info("Loading {{ cookiecutter.participant_name }} scanner...")
         scanner = Scanner()
         {% if cookiecutter.microengine__has_backend == "true" %}
@@ -126,7 +123,6 @@ class Ambassador(AbstractAmbassador):
             watchdog: interval over which a watchdog thread should verify bounty placement on-chain (in number of blocks)
             submission_rate: if nonzero, produce a sleep in the main event loop to prevent the ambassador from overloading `polyswarmd` during testing
         """
-        init_logging([__name__], log_format='json', loglevel=logging.DEBUG)
         super().__init__(client, testing, chains, watchdog, submission_rate)
 
     async def generate_bounties(self, chain):
