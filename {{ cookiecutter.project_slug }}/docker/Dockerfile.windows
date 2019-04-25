@@ -1,0 +1,9 @@
+# escape=`
+from polyswarm/polyswarm-client-windows-internal:latest
+
+COPY . C:\microengine\
+WORKDIR C:\microengine\
+
+RUN pip install --no-warn-script-location -r requirements.txt .
+
+CMD powershell
