@@ -1,5 +1,5 @@
 # escape=`
-from polyswarm/polyswarm-client-windows-internal:latest
+from polyswarm/polyswarm-client-windows:latest
 
 COPY . C:\microengine\
 WORKDIR C:\microengine\
