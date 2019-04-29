@@ -1,0 +1,12 @@
+# escape=`
+from polyswarm/polyswarm-client-windows:latest
+
+COPY . C:\microengine\
+WORKDIR C:\microengine\
+
+RUN pip install --no-warn-script-location -r requirements.txt .
+
+# RUN Install-Service -Name microengine -Path C:\Python36\Scripts\microengine.exe
+# RUN Install-Service -Name worker -Path C:\Python36\Scripts\worker.exe
+
+CMD powershell
