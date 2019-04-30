@@ -1,3 +1,23 @@
+{% if cookiecutter.platform == "windows" %}# escape=`
+FROM polyswarm/polyswarm-client-windows:latest
+
+COPY . C:\microengine\
+WORKDIR C:\microengine\
+
+RUN pip install --no-warn-script-location -r requirements.txt .
+
+# RUN Install-Service -Name microengine -Path C:\Python36\Scripts\microengine.exe
+# RUN Install-Service -Name worker -Path C:\Python36\Scripts\worker.exe
+
+CMD powershell
+
+{% endif %}
+
+
+
+
+
+
 {% if cookiecutter.platform == "linux" %}
 
 FROM polyswarm/polyswarm-client
@@ -24,22 +44,5 @@ RUN set -x && pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir .
 
 CMD ["{{ cookiecutter.participant_type }}", "--backend", "{{ cookiecutter.author_org_slug }}_{{ cookiecutter.participant_name_slug }}"]
-
-{% endif %}
-
-{% if cookiecutter.platform == "windows" %}
-
-# escape=`
-FROM polyswarm/polyswarm-client-windows:latest
-
-COPY . C:\microengine\
-WORKDIR C:\microengine\
-
-RUN pip install --no-warn-script-location -r requirements.txt .
-
-# RUN Install-Service -Name microengine -Path C:\Python36\Scripts\microengine.exe
-# RUN Install-Service -Name worker -Path C:\Python36\Scripts\worker.exe
-
-CMD powershell
 
 {% endif %}
