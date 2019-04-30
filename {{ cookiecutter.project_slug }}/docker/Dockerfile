@@ -30,7 +30,7 @@ CMD ["{{ cookiecutter.participant_type }}", "--backend", "{{ cookiecutter.author
 {% if cookiecutter.platform == "windows" %}
 
 # escape=`
-from polyswarm/polyswarm-client-windows:latest
+FROM polyswarm/polyswarm-client-windows:latest
 
 COPY . C:\microengine\
 WORKDIR C:\microengine\
