@@ -9,6 +9,7 @@ import pytest
 import sys
 from malwarerepoclient.client import DummyMalwareRepoClient
 from {{ cookiecutter.package_slug }} import Microengine, Scanner
+from polyswarmartifact import ArtifactType
 
 {% endif %}
 
@@ -52,7 +53,7 @@ async def test_scan_random_mal_not():
 
     for t in [True, False]:
         mal_md, mal_content = DummyMalwareRepoClient().get_random_file(malicious_filter=t)
-        result = await scanner.scan("nocare", mal_content, "home")
+        result = await scanner.scan("nocare", ArtifactType.FILE, mal_content, "home")
         assert result.verdict == t
 
 {% endif %}

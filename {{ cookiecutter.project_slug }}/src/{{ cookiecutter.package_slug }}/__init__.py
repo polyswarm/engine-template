@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)  # Init logger
 
 from polyswarmclient.abstractmicroengine import AbstractMicroengine
 from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
+from polyswarmartifact import ArtifactType
 
 # CUSTOMIZE_HERE
 # If your engine must call out to a scan engine binary, customize this path to match the location of that backend, e.g.:
@@ -35,10 +36,11 @@ class Scanner(AbstractScanner):
         # If you scanner has a disjoint backend, you'll want to properly detect when that backend is available.
         raise NotImplementedError
     {% endif %}
-    async def scan(self, guid, content, chain):
+    async def scan(self, guid, artifact_type, content, chain):
         """
         Args:
             guid (str): GUID of the bounty under analysis, use to track artifacts in the same bounty
+            artifact_type (ArtifactType): Artifact type for the bounty
             content (bytes): Content of the artifact to be scan
             chain (str): Chain we are operating on
         Returns:
@@ -54,7 +56,7 @@ class Microengine(AbstractMicroengine):
         {{ cookiecutter.participant_name }}
     """
 
-    def __init__(self, client, testing=0, scanner=None, chains=None):
+    def __init__(self, client, testing=0, scanner=None, chains=None, artifact_types=None):
         """
         Initialize {{ cookiecutter.participant_name }}
 
@@ -63,13 +65,16 @@ class Microengine(AbstractMicroengine):
             testing (int): How many test bounties to respond to (shutdown once this is reached) (0 is no limit)
             scanner ('Scanner'): Scanner we are using to process artifacts
             chains (set[str]): Chain we are operating on
+            artifact_types (list[ArtifactType]): List of artifact types this can scan
         """
         logger.info("Loading {{ cookiecutter.participant_name }} scanner...")
+        if artifact_types is None:
+            artifact_types = [ArtifactType.FILE, ArtifactType.URL]
         scanner = Scanner()
         {% if cookiecutter.microengine__has_backend == "true" %}
         client.on_run.register(self.handle_run)
         {% endif %}
-        super().__init__(client, testing, scanner, chains)
+        super().__init__(client, testing, scanner, chains, artifact_types)
     {% if cookiecutter.microengine__has_backend == "true" %}
     async def handle_run(self, chain):
         """
