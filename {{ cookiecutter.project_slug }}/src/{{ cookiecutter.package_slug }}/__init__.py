@@ -30,12 +30,7 @@ class Scanner(AbstractScanner):
 
     def __init__(self):
         super(Scanner, self).__init__()
-    {% if cookiecutter.microengine__has_backend == "true" %}
-    async def wait_for_backend(self):
-        # CUSTOMIZE_HERE
-        # If you scanner has a disjoint backend, you'll want to properly detect when that backend is available.
-        raise NotImplementedError
-    {% endif %}
+
     async def scan(self, guid, artifact_type, content, chain):
         """
         Args:
@@ -49,6 +44,19 @@ class Scanner(AbstractScanner):
         # CUSTOMIZE_HERE
         # This is where you implement your scanner's logic.
         raise NotImplementedError
+
+    { % if cookiecutter.microengine__has_backend == "true" %}
+    async def setup(self):
+        """Override this method to implement custom setup logic.
+        This is run by arbiters, microengines, and workers after the Scanner class is instantiated and before any calls to the scan() method.
+        Args:
+
+        Returns:
+            status (bool): Did setup complete successfully?
+        """
+        return True
+
+    { % endif %}
 
 
 class Microengine(AbstractMicroengine):
@@ -71,22 +79,8 @@ class Microengine(AbstractMicroengine):
         if artifact_types is None:
             artifact_types = [ArtifactType.FILE, ArtifactType.URL]
         scanner = Scanner()
-        {% if cookiecutter.microengine__has_backend == "true" %}
-        client.on_run.register(self.handle_run)
-        {% endif %}
         super().__init__(client, testing, scanner, chains, artifact_types)
-    {% if cookiecutter.microengine__has_backend == "true" %}
-    async def handle_run(self, chain):
-        """
-        Often you'll want to use asyncio code in your wait_for_backend() method.
-        Thus, you need to ensure it is called AFTER the asyncio loop starts.
-        Registering this method with client.on_run.register() ensures it is called immediately when the loop starts.
 
-        :param chain:
-        :return:
-        """
-        await self.scanner.wait_for_backend()
-    {% endif %}
     async def bid(self, guid, mask, verdicts, confidences, metadatas, chain):
         """
         Args:

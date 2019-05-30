@@ -48,7 +48,7 @@ async def test_scan_random_mal_not():
     """
     scanner = Scanner()
     {% if cookiecutter.microengine__has_backend == "true" %}
-    await scanner.wait_for_backend()
+    await scanner.setup()
     {% endif %}
 
     for t in [True, False]:
