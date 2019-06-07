@@ -45,7 +45,7 @@ class Scanner(AbstractScanner):
         # This is where you implement your scanner's logic.
         raise NotImplementedError
 
-    { % if cookiecutter.microengine__has_backend == "true" %}
+    {% if cookiecutter.microengine__has_backend == "true" %}
     async def setup(self):
         """Override this method to implement custom setup logic.
         This is run by arbiters, microengines, and workers after the Scanner class is instantiated and before any calls to the scan() method.
@@ -56,7 +56,7 @@ class Scanner(AbstractScanner):
         """
         return True
 
-    { % endif %}
+    {% endif %}
 
 
 class Microengine(AbstractMicroengine):
