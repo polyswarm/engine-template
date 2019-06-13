@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
-
 import logging
 import os
 
 logger = logging.getLogger(__name__)  # Init logger
 
-{% if cookiecutter.participant_type == "microengine" %}
+{% if cookiecutter.participant_type == "microengine" -%}
 
 from polyswarmclient.abstractmicroengine import AbstractMicroengine
 from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
@@ -45,7 +43,7 @@ class Scanner(AbstractScanner):
         # This is where you implement your scanner's logic.
         raise NotImplementedError
 
-    {% if cookiecutter.microengine__has_backend == "true" %}
+    {% if cookiecutter.microengine__has_backend == "true" -%}
     async def setup(self):
         """Override this method to implement custom setup logic.
         This is run by arbiters, microengines, and workers after the Scanner class is instantiated and before any calls to the scan() method.
@@ -56,7 +54,7 @@ class Scanner(AbstractScanner):
         """
         return True
 
-    {% endif %}
+    {% endif -%}
 
 
 class Microengine(AbstractMicroengine):
@@ -64,7 +62,7 @@ class Microengine(AbstractMicroengine):
         {{ cookiecutter.participant_name }}
     """
 
-    def __init__(self, client, testing=0, scanner=None, chains=None, artifact_types=None):
+    def __init__(self, client, testing=0, scanner=None, chains=None, artifact_types=None, bid_strategy=None, **kwargs):
         """
         Initialize {{ cookiecutter.participant_name }}
 
@@ -79,7 +77,7 @@ class Microengine(AbstractMicroengine):
         if artifact_types is None:
             artifact_types = [ArtifactType.FILE, ArtifactType.URL]
         scanner = Scanner()
-        super().__init__(client, testing, scanner, chains, artifact_types)
+        super().__init__(client, testing, scanner, chains, artifact_types, bid_strategy)
 
     async def bid(self, guid, mask, verdicts, confidences, metadatas, chain):
         """
@@ -97,9 +95,9 @@ class Microengine(AbstractMicroengine):
         # You'll want to drop in your own bid amount logic here.
         # Default logic is to always place the minimum bid amount.
         return await self.client.bounties.parameters[chain].get('assertion_bid_minimum')
-{% endif %}
+{% endif -%}
 
-{% if cookiecutter.participant_type == "ambassador" %}
+{% if cookiecutter.participant_type == "ambassador" -%}
 
 from polyswarmclient.abstractambassador import AbstractAmbassador
 
@@ -135,4 +133,4 @@ class Ambassador(AbstractAmbassador):
         # This is where you implement your ambassador's bounty generation logic.
         raise NotImplementedError
 
-{% endif %}
+{% endif -%}

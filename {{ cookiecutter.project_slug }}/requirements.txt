@@ -1,3 +1,4 @@
+bumpversion
 git+https://github.com/polyswarm/malwarerepoclient.git#egg=malwarerepoclient
 polyswarm-artifact
 pytest==3.9.2
