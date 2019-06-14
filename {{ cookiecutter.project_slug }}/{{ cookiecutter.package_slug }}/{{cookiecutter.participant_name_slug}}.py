@@ -24,6 +24,7 @@ from polyswarmartifact import ArtifactType
 #         {% if cookiecutter.platform == "windows" %}"{{ cookiecutter.participant_name_slug }}.exe"){% endif %}
 #     )
 
+
 class Scanner(AbstractScanner):
 
     def __init__(self):
@@ -43,7 +44,6 @@ class Scanner(AbstractScanner):
         # This is where you implement your scanner's logic.
         raise NotImplementedError
 
-    {% if cookiecutter.microengine__has_backend == "true" -%}
     async def setup(self):
         """Override this method to implement custom setup logic.
         This is run by arbiters, microengines, and workers after the Scanner class is instantiated and before any calls to the scan() method.
@@ -52,9 +52,10 @@ class Scanner(AbstractScanner):
         Returns:
             status (bool): Did setup complete successfully?
         """
+        # CUSTOMIZE_HERE
+        # If your participant requires time to, e.g. connect to an external service before it can process requests,
+        # check for the availability of the service here. Return True when ready, False if there's an error.
         return True
-
-    {% endif -%}
 
 
 class Microengine(AbstractMicroengine):

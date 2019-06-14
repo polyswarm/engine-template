@@ -47,9 +47,7 @@ async def test_scan_random_mal_not():
 
     """
     scanner = Scanner()
-    {% if cookiecutter.microengine__has_backend == "true" %}
     await scanner.setup()
-    {% endif %}
 
     for t in [True, False]:
         mal_md, mal_content = DummyMalwareRepoClient().get_random_file(malicious_filter=t)

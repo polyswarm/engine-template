@@ -17,22 +17,10 @@ def remove_directory(dirpath):
 
 
 def remove_windows_content():
-    remove_directory("packer")
-    remove_file("template.json")
     remove_file("microengine_keyfile")
-
-
-# def remove_linux_content():
-#     remove_directory("docker")
-#     remove_file(".dockerignore")
 
 
 if __name__ == '__main__':
 
     if platform == "linux":
-        # remove windows specific folders/files
         remove_windows_content()
-
-    # if platform == "windows":
-    #     # remove linux specific folders/files
-    #     remove_linux_content()

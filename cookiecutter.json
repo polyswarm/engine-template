@@ -12,9 +12,5 @@
   "author_name": "PolySwarm Developer",
   "author_email": "info@polyswarm.io",
 
-  "package_slug": "{{ cookiecutter.author_org_slug }}_{{ cookiecutter.participant_name_slug }}",
-
-  "microengine__has_backend": ["false", "true"],
-
-  "windows__aws_account_for_ami": "001122334455"
+  "package_slug": "{{ cookiecutter.author_org_slug }}_{{ cookiecutter.participant_name_slug }}"
 }
