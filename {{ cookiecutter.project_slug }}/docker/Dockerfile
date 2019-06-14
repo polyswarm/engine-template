@@ -35,6 +35,7 @@ COPY . .
 # COPY myscanner.bin .
 {% endif -%}
 
+RUN set -x && pip install --no-cache-dir -r requirements.txt
 RUN pip install --no-cache-dir .
 
 CMD ["{{ cookiecutter.participant_type }}", "--backend", "{{ cookiecutter.author_org_slug }}_{{ cookiecutter.participant_name_slug }}"]
