@@ -1,5 +1,93 @@
-version: '3.4'
+version: '2'
 services:
+
+  test_balancemanager_{{ cookiecutter.participant_name_slug }}:
+    image: "polyswarm/polyswarm-client:latest"
+    depends_on:
+      - polyswarmd
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
+      - PASSWORD=password
+    command:
+      - "dockerize"
+      - "-wait"
+      - "tcp://polyswarmd:31337"
+      - "-timeout"
+      - "1000s"
+      - "balancemanager"
+      - "deposit"
+      - "--polyswarmd-addr"
+      - "polyswarmd:31337"
+      - "--insecure-transport"
+      - "100000"
+
+{% if cookiecutter.participant_type == "microengine" %}
+
+  test_redis_{{ cookiecutter.participant_name_slug }}:
+    image: "redis"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+
+  test_microengine-frontend_{{ cookiecutter.participant_name_slug }}:
+    image: "polyswarm/polyswarm-client:latest"
+    depends_on:
+      - polyswarmd
+    environment:
+      - PYTHONUNBUFFERED=1
+      - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
+      - PASSWORD=password
+      - REDIS_ADDR=test_redis_{{ cookiecutter.participant_name_slug }}:6379
+      - QUEUE={{ cookiecutter.project_slug }}
+    command:
+      - "dockerize"
+      - "-wait"
+      - "tcp://polyswarmd:31337"
+      - "-wait"
+      - "tcp://test_redis_{{ cookiecutter.participant_name_slug }}:6379"
+      - "-timeout"
+      - "1000s"
+      - "microengine"
+      - "--log"
+      - "INFO"
+      - "--polyswarmd-addr"
+      - "polyswarmd:31337"
+      - "--insecure-transport"
+      - "--testing"
+      - "10"
+      - "--backend"
+      - "producer"
+      - "--chains"
+      - "side"
+
+  test_microengine-worker_{{ cookiecutter.participant_name_slug }}:
+    image: "{{ cookiecutter.project_slug }}"
+    depends_on:
+      - polyswarmd
+    environment:
+      - PYTHONUNBUFFERED=1
+      - REDIS_ADDR=test_redis_{{ cookiecutter.participant_name_slug }}:6379
+      - QUEUE={{ cookiecutter.project_slug }}
+    command:
+      - "dockerize"
+      - "-wait"
+      - "tcp://polyswarmd:31337"
+      - "-wait"
+      - "tcp://test_redis_{{ cookiecutter.participant_name_slug }}:6379"
+      - "-timeout"
+      - "1000s"
+      - "worker"
+      - "--log"
+      - "INFO"
+      - "--testing"
+      - "10"
+      - "--backend"
+      - "polyswarm_eicar"
+
+{% endif -%}
+{% if cookiecutter.participant_type != "microengine" %}
 
   test_{{ cookiecutter.participant_name_slug }}:
     image: "{{ cookiecutter.project_slug }}"
@@ -15,7 +103,7 @@ services:
       - "1000s"
       - "{{ cookiecutter.participant_type}}"
       - "--log"
-      - "info"
+      - "INFO"
       - "--polyswarmd-addr"
       - "polyswarmd:31337"
       - "--insecure-transport"
@@ -26,28 +114,4 @@ services:
       - "--backend"
       - "{{ cookiecutter.package_slug }}"
 
-  test_deposit-{{ cookiecutter.participant_name_slug }}:
-    image: "polyswarm/polyswarm-client"
-    environment:
-      - PYTHONUNBUFFERED=1
-      - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
-      - PASSWORD=password
-    command:
-      - "dockerize"
-      - "-wait"
-      - "tcp://polyswarmd:31337"
-      - "-timeout"
-      - "1000s"
-      - "balancemanager"
-      - "--log"
-      - "info"
-      - "deposit"
-      - "--polyswarmd-addr"
-      - "polyswarmd:31337"
-      - "--insecure-transport"
-      - "100000"
-
-networks:
-  default:
-    external:
-      name: orchestration_default
+{% endif -%}

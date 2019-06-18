@@ -57,45 +57,6 @@ class Scanner(AbstractScanner):
         # check for the availability of the service here. Return True when ready, False if there's an error.
         return True
 
-
-class Microengine(AbstractMicroengine):
-    """
-        {{ cookiecutter.participant_name }}
-    """
-
-    def __init__(self, client, testing=0, scanner=None, chains=None, artifact_types=None, bid_strategy=None, **kwargs):
-        """
-        Initialize {{ cookiecutter.participant_name }}
-
-        Args:
-            client ('Client'): Client to use
-            testing (int): How many test bounties to respond to (shutdown once this is reached) (0 is no limit)
-            scanner ('Scanner'): Scanner we are using to process artifacts
-            chains (set[str]): Chain we are operating on
-            artifact_types (list[ArtifactType]): List of artifact types this can scan
-        """
-        logger.info("Loading {{ cookiecutter.participant_name }} scanner...")
-        if artifact_types is None:
-            artifact_types = [ArtifactType.FILE, ArtifactType.URL]
-        scanner = Scanner()
-        super().__init__(client, testing, scanner, chains, artifact_types, bid_strategy)
-
-    async def bid(self, guid, mask, verdicts, confidences, metadatas, chain):
-        """
-        Args:
-            guid (str): GUID of the bounty under analysis, use to correlate with artifacts in the same bounty
-            masks (list[bool]): mask for the from scanning the bounty files
-            verdicts (list[bool]): scan verdicts from scanning the bounty files
-            confidences (list[float]): Measure of confidence of verdict per artifact ranging from 0.0 to 1.0
-            metadatas (list[str]): metadata blurbs from scanning the bounty files
-            chain (str): Chain we are operating on
-        Returns:
-            (int): Amount of NCT to bid in base NCT units (10 ^ -18)
-        """
-        # CUSTOMIZE_HERE
-        # You'll want to drop in your own bid amount logic here.
-        # Default logic is to always place the minimum bid amount.
-        return await self.client.bounties.parameters[chain].get('assertion_bid_minimum')
 {% endif -%}
 
 {% if cookiecutter.participant_type == "ambassador" -%}

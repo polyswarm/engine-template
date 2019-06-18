@@ -8,7 +8,7 @@ import pytest
 
 import sys
 from malwarerepoclient.client import DummyMalwareRepoClient
-from {{ cookiecutter.package_slug }} import Microengine, Scanner
+from {{ cookiecutter.package_slug }} import Scanner
 from polyswarmartifact import ArtifactType
 
 {% endif %}
