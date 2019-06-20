@@ -5,11 +5,12 @@ import os
 
 logger = logging.getLogger(__name__)  # Init logger
 
+from polyswarmartifact import ArtifactType
+
 {% if cookiecutter.participant_type == "microengine" -%}
 
 from polyswarmclient.abstractmicroengine import AbstractMicroengine
 from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
-from polyswarmartifact import ArtifactType
 from polyswarmclient.bidstrategy import BidStrategyBase
 
 # CUSTOMIZE_HERE
