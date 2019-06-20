@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)  # Init logger
 from polyswarmclient.abstractmicroengine import AbstractMicroengine
 from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
 from polyswarmartifact import ArtifactType
+from polyswarmclient.bidstrategy import BidStrategyBase
 
 # CUSTOMIZE_HERE
 # If your engine must call out to a scan engine binary, customize this path to match the location of that backend, e.g.:
@@ -23,6 +24,47 @@ from polyswarmartifact import ArtifactType
 #         {% if cookiecutter.platform == "linux" %}"{{ cookiecutter.participant_name_slug }}.sh"){% endif %}
 #         {% if cookiecutter.platform == "windows" %}"{{ cookiecutter.participant_name_slug }}.exe"){% endif %}
 #     )
+
+
+class BidStrategy(BidStrategyBase):
+    """
+    Microengine developers may subclass BidStrategyBase to modify default bid logic paramters or implement fully custom bidding (staking) logic.
+
+    BidStrategyBase's default bid() strategy:
+    1. averages confidences over all artifacts in the given bounty, arriving at a single value
+    2. fits this value on a bid scale, the boundaries of which are set via minimum and maximum multipliers supplied via its constructor
+
+    View the code: https://github.com/polyswarm/polyswarm-client/blob/master/src/polyswarmclient/bidstrategy.py
+
+    NOTE: Assertions for multi-artifact bounties only permit a single bid amount.
+    This is a known limitation that will be removed in the near future.
+    Soon, a mapping of N bids to N artifacts in a single assertion will be supported.
+    Once this is supported, the default bif strategy of producing an average bid across all bounties will be deprecated.
+    """
+
+    # CUSTOMIZE BELOW
+
+    # Override BidStrategyBase's:
+    # * constructor: to alter the minimum & maximum bid multipliers used in the default bid method
+    def __init__(self):
+        """
+        The absolute minimum bid amount is currently 0.0625 NCT.
+
+        With a min_bid_multiplier of:
+        * 8: the floor is set to 0.5 NCT (0.0625 * 8)
+
+        With a max_bid_multiplier:
+        * 8: the ceiling is set to 0.5 NCT (0.0625 * 8)
+
+        If min_bid_multiplier < max_bid_multiplier, the floor and ceiling differ.
+        Confidence is used to determine where the bid falls in the range.
+        """
+        super().__init__(min_bid_multiplier=8, max_bid_multiplier=8)
+
+    # Override BidStrategyBase's:
+    # * bid() method: to implement fully custom bid logic
+    #def bid(self):
+        # my custom bid logic
 
 
 class Scanner(AbstractScanner):
