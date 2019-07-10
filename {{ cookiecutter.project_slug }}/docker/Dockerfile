@@ -1,23 +1,25 @@
 {% if cookiecutter.platform == "windows" -%}# escape=`
 FROM polyswarm/polyswarm-client-windows:latest
 
-COPY . C:\microengine\
 WORKDIR C:\microengine\
 
-RUN pip install --no-warn-script-location -r requirements.txt .
+# -- Install Prerequisites -----------------------------
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# RUN Install-Service -Name microengine -Path C:\Python36\Scripts\microengine.exe
-# RUN Install-Service -Name worker -Path C:\Python36\Scripts\worker.exe
+# -- Copy & Install Participant ------------------------
+COPY . .
+RUN python setup.py install
 
-CMD powershell
+CMD ["powershell"]
 
 {% endif -%}
 
 {% if cookiecutter.platform == "linux" -%}
 
-FROM polyswarm/polyswarm-client
+FROM polyswarm/polyswarm-client:latest
 
-# remove polyswarm client source, since it was already installed, but keep testing keyfiles
+# -- Remove polyswarm-client Source from Base Image ----
 RUN mv /usr/src/app /usr/src/psc \
  && mkdir -p /usr/src/app/docker \
  && cp -a /usr/src/psc/docker/*_keyfile /usr/src/app/docker/ \
@@ -25,9 +27,10 @@ RUN mv /usr/src/app /usr/src/psc \
 
 WORKDIR /usr/src/app
 
+# -- Install Prerequisites -----------------------------
+COPY requirements.txt .
+RUN set -x && pip install --no-cache-dir -r requirements.txt
 RUN apt-get update && apt-get install -y unzip
-
-COPY . .
 
 {% if cookiecutter.participant_type == "microengine" -%}
 # CUSTOMIZE_HERE
@@ -35,7 +38,8 @@ COPY . .
 # COPY myscanner.bin .
 {% endif -%}
 
-RUN set -x && pip install --no-cache-dir -r requirements.txt
+# -- Copy & Install Participant ------------------------
+COPY . .
 RUN pip install --no-cache-dir .
 
 CMD ["{{ cookiecutter.participant_type }}", "--backend", "{{ cookiecutter.author_org_slug }}_{{ cookiecutter.participant_name_slug }}"]

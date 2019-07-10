@@ -5,4 +5,4 @@ services:
     image: "{{ cookiecutter.project_slug }}"
     environment:
       - PYTHON_UNBUFFERED=1
-    command: ["tox"]
+    command: ["pytest", "-s"]
