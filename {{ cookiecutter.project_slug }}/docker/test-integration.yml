@@ -20,9 +20,9 @@ services:
       - "--polyswarmd-addr"
       - "polyswarmd:31337"
       - "--insecure-transport"
-      - "100000"
+      - {% if cookiecutter.participant_type == "microengine" %}"100000"{% endif %}{% if cookiecutter.participant_type == "arbiter" %}"10000000"{% endif %}
 
-{% if cookiecutter.participant_type == "microengine" %}
+{% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "arbiter" %}
 
   test_redis_{{ cookiecutter.participant_name_slug }}:
     image: "redis"
@@ -31,7 +31,7 @@ services:
     ports:
       - "6379:6379"
 
-  test_microengine-frontend_{{ cookiecutter.participant_name_slug }}:
+  test_{{ cookiecutter.participant_type }}-frontend_{{ cookiecutter.participant_name_slug }}:
     image: "polyswarm/polyswarm-client:latest"
     depends_on:
       - polyswarmd
@@ -49,7 +49,7 @@ services:
       - "tcp://test_redis_{{ cookiecutter.participant_name_slug }}:6379"
       - "-timeout"
       - "1000s"
-      - "microengine"
+      - "{{ cookiecutter.participant_type }}"
       - "--log"
       - "INFO"
       - "--polyswarmd-addr"
@@ -62,7 +62,7 @@ services:
       - "--chains"
       - "side"
 
-  test_microengine-worker_{{ cookiecutter.participant_name_slug }}:
+  test_{{ cookiecutter.participant_type }}-worker_{{ cookiecutter.participant_name_slug }}:
     image: "{{ cookiecutter.project_slug }}"
     depends_on:
       - polyswarmd
@@ -84,10 +84,11 @@ services:
       - "--testing"
       - "10"
       - "--backend"
-      - "polyswarm_eicar"
+      - "{{ cookiecutter.package_slug }}"
 
 {% endif -%}
-{% if cookiecutter.participant_type != "microengine" %}
+
+{% if cookiecutter.participant_type == "ambassador" %}
 
   test_{{ cookiecutter.participant_name_slug }}:
     image: "{{ cookiecutter.project_slug }}"

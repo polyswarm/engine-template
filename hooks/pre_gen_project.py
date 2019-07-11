@@ -9,7 +9,7 @@ participant_name_slug = '{{ cookiecutter.participant_name_slug }}'
 
 author_org_slug = '{{ cookiecutter.author_org_slug }}'
 
-if participant_type not in ["microengine", "ambassador"]:
+if participant_type not in ["microengine", "ambassador", "arbiter"]:
     print("ERROR {} is not a valid participant type".format(participant_type))
     sys.exit(1)
 
@@ -27,10 +27,7 @@ for ic in ["_", " ", "-", "."]:
         print("ERROR {} must not exist in author org slug".format(ic))
         sys.exit(1)
 
-# Ambassadors only
-if participant_type == "ambassador":
-
-    if platform == "windows":
-        print("ERROR Windows ambassadors are not supported. "
-              "Please re-run cookiecutter and specify Linux as the platform.")
-        sys.exit(1)
+# Only Microengines are supported on Windows
+if platform == "windows" and participant_type != "microengine":
+    print("ERROR: {} are not supported on Windows. ".format(participant_type))
+    sys.exit(1)

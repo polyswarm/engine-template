@@ -1,5 +1,5 @@
 {
-  "participant_type": ["microengine", "ambassador"],
+  "participant_type": ["microengine", "ambassador", "arbiter"],
   "platform": ["linux", "windows"],
 
   "participant_name": "myfirstparticipant",

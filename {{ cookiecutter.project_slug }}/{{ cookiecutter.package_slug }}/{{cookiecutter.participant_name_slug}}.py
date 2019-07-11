@@ -7,11 +7,9 @@ logger = logging.getLogger(__name__)  # Init logger
 
 from polyswarmartifact import ArtifactType
 
-{% if cookiecutter.participant_type == "microengine" -%}
+{% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "arbiter" -%}
 
-from polyswarmclient.abstractmicroengine import AbstractMicroengine
 from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
-from polyswarmclient.bidstrategy import BidStrategyBase
 
 # CUSTOMIZE_HERE
 # If your engine must call out to a scan engine binary, customize this path to match the location of that backend, e.g.:
@@ -25,6 +23,11 @@ from polyswarmclient.bidstrategy import BidStrategyBase
 #         {% if cookiecutter.platform == "linux" %}"{{ cookiecutter.participant_name_slug }}.sh"){% endif %}
 #         {% if cookiecutter.platform == "windows" %}"{{ cookiecutter.participant_name_slug }}.exe"){% endif %}
 #     )
+
+
+{% if cookiecutter.participant_type == "microengine" -%}
+
+from polyswarmclient.bidstrategy import BidStrategyBase
 
 
 class BidStrategy(BidStrategyBase):
@@ -67,6 +70,7 @@ class BidStrategy(BidStrategyBase):
     #def bid(self):
         # my custom bid logic
 
+{% endif -%}
 
 class Scanner(AbstractScanner):
 
@@ -88,8 +92,9 @@ class Scanner(AbstractScanner):
         raise NotImplementedError
 
     async def setup(self):
-        """Override this method to implement custom setup logic.
-        This is run by arbiters, microengines, and workers after the Scanner class is instantiated and before any calls to the scan() method.
+        """
+        Override this method to implement custom setup logic.
+        This is run by arbiters and microengines after the Scanner class is instantiated and before any calls to the scan() method.
         Args:
 
         Returns:

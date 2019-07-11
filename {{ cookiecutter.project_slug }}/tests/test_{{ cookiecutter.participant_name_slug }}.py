@@ -4,22 +4,16 @@
 import asyncio
 import pytest
 
-{% if cookiecutter.participant_type == "microengine" %}
+{% if cookiecutter.participant_type == "ambassador" %}
+from {{ cookiecutter.package_slug }} import Ambassador
+{% endif %}
 
+{% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "arbiter" %}
 import sys
 from malwarerepoclient.client import DummyMalwareRepoClient
 from {{ cookiecutter.package_slug }} import Scanner
 from polyswarmartifact import ArtifactType
 
-{% endif %}
-
-{% if cookiecutter.participant_type == "ambassador" %}
-
-from {{ cookiecutter.package_slug }} import Ambassador
-
-{% endif %}
-
-{% if cookiecutter.participant_type == "microengine" %}
 
 @pytest.yield_fixture()
 def event_loop():
@@ -51,7 +45,12 @@ async def test_scan_random_mal_not():
 
     for t in [True, False]:
         mal_md, mal_content = DummyMalwareRepoClient().get_random_file(malicious_filter=t)
-        result = await scanner.scan("nocare", ArtifactType.FILE, mal_content, "home")
+        result = await scanner.scan(
+            guid="nocare",
+            artifact_type=ArtifactType.FILE,
+            content=mal_content,
+            metadata=None,
+            chain="home")
         assert result.verdict == t
 
 {% endif %}
