@@ -3,8 +3,6 @@ services:
 
   test_balancemanager_{{ cookiecutter.participant_name_slug }}:
     image: "polyswarm/polyswarm-client:latest"
-    depends_on:
-      - polyswarmd
     environment:
       - PYTHONUNBUFFERED=1
       - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
@@ -33,8 +31,6 @@ services:
 
   test_{{ cookiecutter.participant_type }}-frontend_{{ cookiecutter.participant_name_slug }}:
     image: "polyswarm/polyswarm-client:latest"
-    depends_on:
-      - polyswarmd
     environment:
       - PYTHONUNBUFFERED=1
       - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
@@ -64,8 +60,6 @@ services:
 
   test_{{ cookiecutter.participant_type }}-worker_{{ cookiecutter.participant_name_slug }}:
     image: "{{ cookiecutter.project_slug }}"
-    depends_on:
-      - polyswarmd
     environment:
       - PYTHONUNBUFFERED=1
       - REDIS_ADDR=test_redis_{{ cookiecutter.participant_name_slug }}:6379
