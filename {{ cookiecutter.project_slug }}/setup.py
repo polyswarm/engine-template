@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='{{ cookiecutter.package_slug }}',
@@ -13,7 +13,7 @@ setup(
         'polyswarm-client'
     ],
     include_package_data=True,
-    packages=['{{ cookiecutter.package_slug }}'],
+    packages=find_packages(),
     package_dir={
         '{{ cookiecutter.package_slug }}': '{{ cookiecutter.package_slug }}',
     },
