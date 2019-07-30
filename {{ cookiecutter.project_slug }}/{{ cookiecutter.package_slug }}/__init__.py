@@ -4,4 +4,4 @@ from .{{cookiecutter.participant_name_slug}} import Scanner
 from .{{cookiecutter.participant_name_slug}} import Ambassador
 {%endif-%}
 
-__version__ = "0.1.0"
+__version__ = '0.1.0'
