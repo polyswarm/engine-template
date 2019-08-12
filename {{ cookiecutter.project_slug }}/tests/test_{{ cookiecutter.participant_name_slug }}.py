@@ -46,11 +46,11 @@ async def test_scan_random_mal_not():
     for t in [True, False]:
         mal_md, mal_content = DummyMalwareRepoClient().get_random_file(malicious_filter=t)
         result = await scanner.scan(
-            guid="nocare",
+            guid='nocare',
             artifact_type=ArtifactType.FILE,
             content=mal_content,
             metadata=None,
-            chain="home")
+            chain='home')
         assert result.verdict == t
 
 {% endif %}
