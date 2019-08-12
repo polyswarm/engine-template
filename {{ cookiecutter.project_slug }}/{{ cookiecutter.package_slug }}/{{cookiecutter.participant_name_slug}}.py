@@ -3,13 +3,24 @@
 import logging
 import os
 
-logger = logging.getLogger(__name__)  # Init logger
-
 from polyswarmartifact import ArtifactType
+from polyswarmartifact.schema.verdict import Verdict
 
-{% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "arbiter" -%}
+{% if cookiecutter.participant_type == "microengine" or 
+      cookiecutter.participant_type == "arbiter" -%}
 
 from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
+{% endif -%}
+
+{% if cookiecutter.participant_type == "microengine" -%}
+from polyswarmclient.bidstrategy import BidStrategyBase
+
+import {{ cookiecutter.package_slug }}
+
+{% endif -%}
+
+{% if cookiecutter.participant_type == "microengine" or 
+      cookiecutter.participant_type == "arbiter" -%}
 
 # CUSTOMIZE_HERE
 # If your engine must call out to a scan engine binary, customize this path to match the location of that backend, e.g.:
@@ -24,11 +35,9 @@ from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
 #         {% if cookiecutter.platform == "windows" %}"{{ cookiecutter.participant_name_slug }}.exe"){% endif %}
 #     )
 
-
 {% if cookiecutter.participant_type == "microengine" -%}
 
-from polyswarmclient.bidstrategy import BidStrategyBase
-
+logger = logging.getLogger(__name__)  # Init logger
 
 class BidStrategy(BidStrategyBase):
     """
@@ -72,10 +81,48 @@ class BidStrategy(BidStrategyBase):
 
 {% endif -%}
 
+class {{ cookiecutter.participant_name_slug|title }}:
+    # CUSTOMIZE_HERE
+    # This is where you implement your scanner's logic.
+
+    def __init__(self):
+        pass
+
+    async def setup(self):
+        """
+        Override this method to implement custom setup logic.
+
+        Returns:
+            status (bool): Did setup complete successfully?
+        """
+
+        # CUSTOMIZE_HERE
+        # If your participant requires time to, e.g. connect to an external service before it can process requests,
+        # check for the availability of the service here. Return True when ready, False if there's an error.
+        return True
+
+    async def file_scan(self, content, metadata):
+        raise NotImplementedError
+
+    async def url_scan(self, content, metadata):
+        raise NotImplementedError
+
+
 class Scanner(AbstractScanner):
 
     def __init__(self):
         super(Scanner, self).__init__()
+        self.{{ cookiecutter.participant_name_slug }} = {{cookiecutter.participant_name_slug|title}}()
+
+    async def setup(self):
+        """
+        Override this method to implement custom setup logic.
+        This is run by arbiters and microengines after the Scanner class is instantiated and before any calls to the scan() method.
+
+        Returns:
+            status (bool): Did setup complete successfully?
+        """
+        return await self.{{ cookiecutter.participant_name_slug }}.setup()
 
     async def scan(self, guid, artifact_type, content, metadata, chain):
         """
@@ -87,24 +134,19 @@ class Scanner(AbstractScanner):
         Returns:
             ScanResult: Result of this scan
         """
-        # CUSTOMIZE_HERE
-        # This is where you implement your scanner's logic.
-        raise NotImplementedError
+        metadata = Verdict().set_malware_family('')\
+                            .set_scanner(operating_system=platform.system(),
+                                         architecture=platform.machine(),
+                                         vendor_version='',
+                                         version={{ cookiecutter.package_slug }}.__version__)
 
-    async def setup(self):
-        """
-        Override this method to implement custom setup logic.
-        This is run by arbiters and microengines after the Scanner class is instantiated and before any calls to the scan() method.
-        Args:
-
-        Returns:
-            status (bool): Did setup complete successfully?
-        """
-        # CUSTOMIZE_HERE
-        # If your participant requires time to, e.g. connect to an external service before it can process requests,
-        # check for the availability of the service here. Return True when ready, False if there's an error.
-        return True
-
+        if artifact_type == ArtifactType.FILE:
+            return await self.{{ cookiecutter.participant_name_slug }}.file_scan(content, metadata)
+        elif artifact_type == ArtifactType.URL:
+            return await self.{{ cookiecutter.participant_name_slug }}.url_scan(content, metadata)
+        else:
+            logger.error('Invalid artifact_type. Skipping bounty.')
+            return ScanResult(metadata=metadata.json())
 {% endif -%}
 
 {% if cookiecutter.participant_type == "ambassador" -%}
