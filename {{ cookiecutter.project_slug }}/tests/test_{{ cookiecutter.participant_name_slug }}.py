@@ -37,22 +37,48 @@ def event_loop():
 @pytest.mark.asyncio
 async def test_scan_random_mal_not():
     """
-    Run scanner against one malicious file (EICAR) and one non-malicious file.
+    1. Run scanner against one malicious file (EICAR) and one non-malicious file.
+    2. Run scanner against one malicious URL and non-malicious URL.
 
     """
     scanner = Scanner()
     await scanner.setup()
 
+    ###
+    ### File artifacts
+    ###
+    
     for t in [True, False]:
-        mal_md, mal_content = DummyMalwareRepoClient().get_random_file(malicious_filter=t)
-        result = await scanner.scan(
-            guid='nocare',
-            artifact_type=ArtifactType.FILE,
-            content=mal_content,
-            metadata=None,
-            chain='home')
+        mal_md, mal_content = DummyMalwareRepoClient()\
+                              .get_random_file(malicious_filter=t)
+        result = await scanner.scan(guid='nocare',
+                                    artifact_type=ArtifactType.FILE,
+                                    content=mal_content,
+                                    metadata=None,
+                                    chain='home')
+        assert result.bit
         assert result.verdict == t
+    
 
+    ###
+    ### URL artifacts
+    ###
+
+    ## URL 
+
+    #   Expect malicious
+    url = 'http://iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com'
+    result = await scanner.scan('nocare', ArtifactType.URL, 
+                                url, None, 'home')
+    assert result.bit
+    assert result.verdict
+
+    #   Except benign
+    url = 'https://google.com'
+    result = await scanner.scan('nocare', ArtifactType.URL, 
+                                url, None, 'home')
+    assert result.bit
+    assert not result.verdict
 {% endif %}
 
 {% if cookiecutter.participant_type == "ambassador" %}
