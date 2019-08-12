@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+import platform
 import os
 
 from polyswarmartifact import ArtifactType
