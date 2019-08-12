@@ -82,9 +82,10 @@ class BidStrategy(BidStrategyBase):
 {% endif -%}
 
 class {{ cookiecutter.participant_name_slug|title }}:
-    # CUSTOMIZE_HERE
-    # This is where you implement your scanner's logic.
-
+    """
+    CUSTOMIZE_HERE
+        This is where you implement your scanner's logic.
+    """
     def __init__(self):
         pass
 
@@ -102,9 +103,51 @@ class {{ cookiecutter.participant_name_slug|title }}:
         return True
 
     async def file_scan(self, content, metadata):
+        """
+        Implement your File Scan microengine
+
+        Args:
+            content (bytes): binary content
+            metadata (object): metadata object
+
+        Returns: 
+            ScanResult: Result of this scan
+        """
+
+        # ScanResult Object: 
+        #
+        # bit : a boolean representing a malicious or benign determination
+        # verdict: another boolean representing whether the engine wishes to assert on the artifact
+        # metadata: an object describing our scan results
+
+        # return ScanResult(bit=bit_variable, 
+        #                   verdict=verdict_variable,
+        #                   metadata=metadata.json())
+
         raise NotImplementedError
 
     async def url_scan(self, content, metadata):
+        """
+        Implement your URL Scan microengine
+        
+        Args:
+            content (bytes): binary content
+            metadata (object): metadata object
+
+        Returns: 
+            ScanResult: Result of this scan
+        """
+
+        # ScanResult Object: 
+        #
+        # bit : a boolean representing a malicious or benign determination
+        # verdict: another boolean representing whether the engine wishes to assert on the artifact
+        # metadata: an object describing our scan results
+
+        # return ScanResult(bit=bit_variable, 
+        #                   verdict=verdict_variable,
+        #                   metadata=metadata.json())
+
         raise NotImplementedError
 
 
@@ -140,10 +183,13 @@ class Scanner(AbstractScanner):
                                          vendor_version='',
                                          version={{ cookiecutter.package_slug }}.__version__)
 
+        # Binary File Scan
         if artifact_type == ArtifactType.FILE:
             return await self.{{ cookiecutter.participant_name_slug }}.file_scan(content, metadata)
+        # URL Scan
         elif artifact_type == ArtifactType.URL:
             return await self.{{ cookiecutter.participant_name_slug }}.url_scan(content, metadata)
+        # Not supported artifact
         else:
             logger.error('Invalid artifact_type. Skipping bounty.')
             return ScanResult(metadata=metadata.json())
