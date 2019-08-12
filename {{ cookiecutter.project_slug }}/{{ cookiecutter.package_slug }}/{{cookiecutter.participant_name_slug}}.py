@@ -156,7 +156,7 @@ class Scanner(AbstractScanner):
 
     def __init__(self):
         super(Scanner, self).__init__()
-        self.{{ cookiecutter.participant_name_slug }} = {{cookiecutter.participant_name_slug|title}}()
+        self.{{ cookiecutter.participant_name_slug }} = {{ cookiecutter.participant_name_slug|title }}()
 
     async def setup(self):
         """
