@@ -67,14 +67,14 @@ async def test_scan_random_mal_not():
     ## URL 
 
     #   Expect malicious
-    url = 'http://iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com'
+    url = b'http://iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com'
     result = await scanner.scan('nocare', ArtifactType.URL, 
                                 url, None, 'home')
     assert result.bit
     assert result.verdict
 
     #   Except benign
-    url = 'https://google.com'
+    url = b'https://google.com'
     result = await scanner.scan('nocare', ArtifactType.URL, 
                                 url, None, 'home')
     assert result.bit
