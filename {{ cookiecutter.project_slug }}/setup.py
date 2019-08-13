@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='{{ cookiecutter.package_slug }}',
-    version="0.1.0",
+    version='0.1.0',
     description='{{ cookiecutter.participant_name }}',
     author='{{ cookiecutter.author_name }}',
     author_email='{{ cookiecutter.author_email }}',
