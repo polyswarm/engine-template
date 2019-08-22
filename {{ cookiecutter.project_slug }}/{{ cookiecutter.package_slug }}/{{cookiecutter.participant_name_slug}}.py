@@ -7,7 +7,7 @@ import os
 from polyswarmartifact import ArtifactType
 from polyswarmartifact.schema.verdict import Verdict
 
-{% if cookiecutter.participant_type == "microengine" or 
+{% if cookiecutter.participant_type == "microengine" or
       cookiecutter.participant_type == "arbiter" -%}
 
 from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
@@ -20,7 +20,7 @@ import {{ cookiecutter.package_slug }}
 
 {% endif -%}
 
-{% if cookiecutter.participant_type == "microengine" or 
+{% if cookiecutter.participant_type == "microengine" or
       cookiecutter.participant_type == "arbiter" -%}
 
 # CUSTOMIZE_HERE
@@ -80,6 +80,7 @@ class BidStrategy(BidStrategyBase):
     #def bid(self):
         # my custom bid logic
 
+
 {% endif -%}
 
 class {{ cookiecutter.participant_name_slug|title }}:
@@ -104,7 +105,6 @@ class {{ cookiecutter.participant_name_slug|title }}:
         return True
 
 {% if cookiecutter.microengine__supports_scanning_files == "true" %}
-
     async def file_scan(self, content, metadata):
         """
         Implement your File Scan microengine
@@ -113,45 +113,42 @@ class {{ cookiecutter.participant_name_slug|title }}:
             content (bytes): binary content
             metadata (object): metadata object
 
-        Returns: 
+        Returns:
             ScanResult: Result of this scan
         """
 
-        # ScanResult Object: 
+        # ScanResult Object:
         #
         # bit : a boolean representing a malicious or benign determination
         # verdict: another boolean representing whether the engine wishes to assert on the artifact
         # metadata: an object describing our scan results
 
-        # return ScanResult(bit=bit_variable, 
+        # return ScanResult(bit=bit_variable,
         #                   verdict=verdict_variable,
         #                   metadata=metadata.json())
 
         raise NotImplementedError
-
 {% endif %}
-
 {% if cookiecutter.microengine__supports_scanning_urls == "true" %}
-
     async def url_scan(self, content, metadata):
         """
         Implement your URL Scan microengine
-        
+
         Args:
             content (bytes): binary content
             metadata (object): metadata object
 
-        Returns: 
+        Returns:
             ScanResult: Result of this scan
         """
 
-        # ScanResult Object: 
+        # ScanResult Object:
         #
         # bit : a boolean representing a malicious or benign determination
         # verdict: another boolean representing whether the engine wishes to assert on the artifact
         # metadata: an object describing our scan results
 
-        # return ScanResult(bit=bit_variable, 
+        # return ScanResult(bit=bit_variable,
         #                   verdict=verdict_variable,
         #                   metadata=metadata.json())
 
