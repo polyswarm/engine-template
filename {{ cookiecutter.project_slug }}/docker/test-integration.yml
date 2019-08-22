@@ -22,27 +22,20 @@ services:
 
 {% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "arbiter" %}
 
-  test_redis_{{ cookiecutter.participant_name_slug }}:
-    image: "redis"
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-      - "6379:6379"
-
   test_{{ cookiecutter.participant_type }}-frontend_{{ cookiecutter.participant_name_slug }}:
     image: "polyswarm/polyswarm-client:latest"
     environment:
       - PYTHONUNBUFFERED=1
       - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
       - PASSWORD=password
-      - REDIS_ADDR=test_redis_{{ cookiecutter.participant_name_slug }}:6379
+      - REDIS_ADDR=redis:6379
       - QUEUE={{ cookiecutter.project_slug }}
     command:
       - "dockerize"
       - "-wait"
       - "tcp://polyswarmd:31337"
       - "-wait"
-      - "tcp://test_redis_{{ cookiecutter.participant_name_slug }}:6379"
+      - "tcp://redis:6379"
       - "-timeout"
       - "1000s"
       - "{{ cookiecutter.participant_type }}"
@@ -58,18 +51,20 @@ services:
       - "--chains"
       - "side"
 
+{% if cookiecutter.platform == "linux" %}
+
   test_{{ cookiecutter.participant_type }}-worker_{{ cookiecutter.participant_name_slug }}:
     image: "{{ cookiecutter.project_slug }}"
     environment:
       - PYTHONUNBUFFERED=1
-      - REDIS_ADDR=test_redis_{{ cookiecutter.participant_name_slug }}:6379
+      - REDIS_ADDR=redis:6379
       - QUEUE={{ cookiecutter.project_slug }}
     command:
       - "dockerize"
       - "-wait"
       - "tcp://polyswarmd:31337"
       - "-wait"
-      - "tcp://test_redis_{{ cookiecutter.participant_name_slug }}:6379"
+      - "tcp://redis:6379"
       - "-timeout"
       - "1000s"
       - "worker"
@@ -79,6 +74,8 @@ services:
       - "10"
       - "--backend"
       - "{{ cookiecutter.package_slug }}"
+
+{% endif %}
 
 {% endif -%}
 
@@ -110,3 +107,8 @@ services:
       - "{{ cookiecutter.package_slug }}"
 
 {% endif -%}
+
+networks:
+  default:
+    external:
+      name: orchestration_default
