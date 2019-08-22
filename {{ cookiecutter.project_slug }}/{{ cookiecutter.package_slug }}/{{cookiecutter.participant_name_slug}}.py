@@ -190,7 +190,7 @@ class Scanner(AbstractScanner):
         # File Scan
         if artifact_type == ArtifactType.FILE:
             return await self.{{ cookiecutter.participant_name_slug }}.file_scan(content, metadata)
-{% endif %}
+{% endif -%}
 {% if cookiecutter.microengine__supports_scanning_urls == "true" %}
         # URL Scan
         if artifact_type == ArtifactType.URL:
