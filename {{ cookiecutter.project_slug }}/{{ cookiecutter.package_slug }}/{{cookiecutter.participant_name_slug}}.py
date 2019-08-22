@@ -103,7 +103,6 @@ class {{ cookiecutter.participant_name_slug|title }}:
         # If your participant requires time to, e.g. connect to an external service before it can process requests,
         # check for the availability of the service here. Return True when ready, False if there's an error.
         return True
-
 {% if cookiecutter.microengine__supports_scanning_files == "true" %}
     async def file_scan(self, content, metadata):
         """
@@ -128,7 +127,7 @@ class {{ cookiecutter.participant_name_slug|title }}:
         #                   metadata=metadata.json())
 
         raise NotImplementedError
-{% endif %}
+{% endif -%}
 {% if cookiecutter.microengine__supports_scanning_urls == "true" %}
     async def url_scan(self, content, metadata):
         """
@@ -153,7 +152,6 @@ class {{ cookiecutter.participant_name_slug|title }}:
         #                   metadata=metadata.json())
 
         raise NotImplementedError
-
 {% endif %}
 
 class Scanner(AbstractScanner):
