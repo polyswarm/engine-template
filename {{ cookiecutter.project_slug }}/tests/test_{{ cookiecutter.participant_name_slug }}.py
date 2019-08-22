@@ -37,12 +37,17 @@ def event_loop():
 @pytest.mark.asyncio
 async def test_scan_random_mal_not():
     """
+{% if cookiecutter.microengine__supports_scanning_files == "true" %}
     1. Run scanner against one malicious file (EICAR) and one non-malicious file.
+{% endif %}
+{% if cookiecutter.microengine__supports_scanning_urls == "true" %}
     2. Run scanner against one malicious URL and non-malicious URL.
-
+{% endif %}
     """
     scanner = Scanner()
     await scanner.setup()
+
+{% if cookiecutter.microengine__supports_scanning_files == "true" %}
 
     ###
     ### File artifacts
@@ -59,26 +64,30 @@ async def test_scan_random_mal_not():
         assert result.bit
         assert result.verdict == t
     
+{% endif %}
+
+{% if cookiecutter.microengine__supports_scanning_urls == "true" %}
 
     ###
     ### URL artifacts
     ###
 
-    ## URL 
-
-    #   Expect malicious
+    # Expect malicious
     url = b'http://iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com'
     result = await scanner.scan('nocare', ArtifactType.URL, 
                                 url, None, 'home')
     assert result.bit
     assert result.verdict
 
-    #   Except benign
+    # Except benign
     url = b'https://google.com'
     result = await scanner.scan('nocare', ArtifactType.URL, 
                                 url, None, 'home')
     assert result.bit
     assert not result.verdict
+
+{% endif %}
+
 {% endif %}
 
 {% if cookiecutter.participant_type == "ambassador" %}

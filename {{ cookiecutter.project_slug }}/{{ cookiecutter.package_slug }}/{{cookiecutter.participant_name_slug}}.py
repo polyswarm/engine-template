@@ -103,6 +103,8 @@ class {{ cookiecutter.participant_name_slug|title }}:
         # check for the availability of the service here. Return True when ready, False if there's an error.
         return True
 
+{% if cookiecutter.microengine__supports_scanning_files == "true" %}
+
     async def file_scan(self, content, metadata):
         """
         Implement your File Scan microengine
@@ -126,6 +128,10 @@ class {{ cookiecutter.participant_name_slug|title }}:
         #                   metadata=metadata.json())
 
         raise NotImplementedError
+
+{% endif %}
+
+{% if cookiecutter.microengine__supports_scanning_urls == "true" %}
 
     async def url_scan(self, content, metadata):
         """
@@ -151,6 +157,7 @@ class {{ cookiecutter.participant_name_slug|title }}:
 
         raise NotImplementedError
 
+{% endif %}
 
 class Scanner(AbstractScanner):
 
@@ -184,16 +191,19 @@ class Scanner(AbstractScanner):
                                          vendor_version='',
                                          version={{ cookiecutter.package_slug }}.__version__)
 
-        # Binary File Scan
+{% if cookiecutter.microengine__supports_scanning_files == "true" %}
+        # File Scan
         if artifact_type == ArtifactType.FILE:
             return await self.{{ cookiecutter.participant_name_slug }}.file_scan(content, metadata)
+{% endif %}
+{% if cookiecutter.microengine__supports_scanning_urls == "true" %}
         # URL Scan
-        elif artifact_type == ArtifactType.URL:
+        if artifact_type == ArtifactType.URL:
             return await self.{{ cookiecutter.participant_name_slug }}.url_scan(content, metadata)
+{% endif %}
         # Not supported artifact
-        else:
-            logger.error('Invalid artifact_type. Skipping bounty.')
-            return ScanResult(metadata=metadata.json())
+        logger.error('Invalid artifact_type. Skipping bounty.')
+        return ScanResult(metadata=metadata.json())
 {% endif -%}
 
 {% if cookiecutter.participant_type == "ambassador" -%}

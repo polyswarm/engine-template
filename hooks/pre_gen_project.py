@@ -9,6 +9,9 @@ participant_name_slug = '{{ cookiecutter.participant_name_slug }}'
 
 author_org_slug = '{{ cookiecutter.author_org_slug }}'
 
+microengine__supports_scanning_files = '{{ cookiecutter.microengine__supports_scanning_files }}'
+microengine__supports_scanning_urls = '{{ cookiecutter.microengine__supports_scanning_urls }}'
+
 if participant_type not in ["microengine", "ambassador", "arbiter"]:
     print("ERROR {} is not a valid participant type".format(participant_type))
     sys.exit(1)
@@ -25,6 +28,11 @@ for ic in ["_", " ", "-", "."]:
 for ic in ["_", " ", "-", "."]:
     if ic in author_org_slug:
         print("ERROR {} must not exist in author org slug".format(ic))
+        sys.exit(1)
+
+if participant_type == "microengine":
+    if microengine__supports_scanning_files == "false" and microengine__supports_scanning_urls == "false":
+        print("ERROR: microengines must support scanning files, URLs or both")
         sys.exit(1)
 
 # Only Microengines are supported on Windows
