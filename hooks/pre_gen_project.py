@@ -9,8 +9,8 @@ participant_name_slug = '{{ cookiecutter.participant_name_slug }}'
 
 author_org_slug = '{{ cookiecutter.author_org_slug }}'
 
-microengine__supports_scanning_files = '{{ cookiecutter.microengine__supports_scanning_files }}'
-microengine__supports_scanning_urls = '{{ cookiecutter.microengine__supports_scanning_urls }}'
+microengine_arbiter__supports_scanning_files = '{{ cookiecutter.microengine_arbiter__supports_scanning_files }}'
+microengine_arbiter__supports_scanning_urls = '{{ cookiecutter.microengine_arbiter__supports_scanning_urls }}'
 
 if participant_type not in ["microengine", "ambassador", "arbiter"]:
     print("ERROR {} is not a valid participant type".format(participant_type))
@@ -30,9 +30,9 @@ for ic in ["_", " ", "-", "."]:
         print("ERROR {} must not exist in author org slug".format(ic))
         sys.exit(1)
 
-if participant_type == "microengine":
-    if microengine__supports_scanning_files == "false" and microengine__supports_scanning_urls == "false":
-        print("ERROR: microengines must support scanning files, URLs or both")
+if participant_type == "microengine" or participant_type == "arbiter":
+    if microengine_arbiter__supports_scanning_files == "false" and microengine_arbiter__supports_scanning_urls == "false":
+        print("ERROR: microengines/arbiters must support scanning files, URLs or both")
         sys.exit(1)
 
 # Only Microengines are supported on Windows

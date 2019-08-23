@@ -104,7 +104,7 @@ class {{ cookiecutter.participant_name_slug|title }}:
         # If your participant requires time to, e.g. connect to an external service before it can process requests,
         # check for the availability of the service here. Return True when ready, False if there's an error.
         return True
-{% if cookiecutter.microengine__supports_scanning_files == "true" %}
+{% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" %}
     async def file_scan(self, content, metadata):
         """
         Implement your File Scan microengine
@@ -129,7 +129,7 @@ class {{ cookiecutter.participant_name_slug|title }}:
 
         raise NotImplementedError
 {% endif -%}
-{% if cookiecutter.microengine__supports_scanning_urls == "true" %}
+{% if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" %}
     async def url_scan(self, content, metadata):
         """
         Implement your URL Scan microengine
@@ -187,12 +187,12 @@ class Scanner(AbstractScanner):
                                          vendor_version='',
                                          version={{ cookiecutter.package_slug }}.__version__)
 
-{% if cookiecutter.microengine__supports_scanning_files == "true" %}
+{% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" %}
         # File Scan
         if artifact_type == ArtifactType.FILE:
             return await self.{{ cookiecutter.participant_name_slug }}.file_scan(content, metadata)
 {% endif -%}
-{% if cookiecutter.microengine__supports_scanning_urls == "true" %}
+{% if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" %}
         # URL Scan
         if artifact_type == ArtifactType.URL:
             return await self.{{ cookiecutter.participant_name_slug }}.url_scan(content, metadata)
