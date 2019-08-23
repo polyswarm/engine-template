@@ -38,16 +38,16 @@ def event_loop():
 @pytest.mark.asyncio
 async def test_scan_random_mal_not():
     """
-{%- if cookiecutter.microengine__supports_scanning_files == "true" %}
+{%- if cookiecutter.microengine_arbiter__supports_scanning_files == "true" %}
     1. Run scanner against one malicious file (EICAR) and one non-malicious file.
 {%- endif -%}
-{% if cookiecutter.microengine__supports_scanning_urls == "true" %}
+{% if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" %}
     2. Run scanner against one malicious URL and non-malicious URL.
 {% endif %}
     """
     scanner = Scanner()
     await scanner.setup()
-{% if cookiecutter.microengine__supports_scanning_files == "true" %}
+{% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" %}
     ###
     ### File artifacts
     ###
@@ -64,7 +64,7 @@ async def test_scan_random_mal_not():
         assert result.verdict == t
 {% endif -%}
 
-{% if cookiecutter.microengine__supports_scanning_urls == "true" %}
+{% if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" %}
     ###
     ### URL artifacts
     ###

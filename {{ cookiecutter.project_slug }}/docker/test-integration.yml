@@ -50,6 +50,10 @@ services:
       - "producer"
       - "--chains"
       - "side"
+      {% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" %}- "--artifact-type"
+      - "file"{% endif %}
+      {% if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" -%}- "--artifact-type"
+      - "url"{%- endif -%}
 
 {% if cookiecutter.platform == "linux" %}
 

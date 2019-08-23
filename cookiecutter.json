@@ -1,8 +1,8 @@
 {
   "participant_type": ["microengine", "ambassador", "arbiter"],
   "platform": ["linux", "windows"],
-  "microengine__supports_scanning_files": ["true", "false"],
-  "microengine__supports_scanning_urls": ["true", "false"],
+  "microengine_arbiter__supports_scanning_files": ["true", "false"],
+  "microengine_arbiter__supports_scanning_urls": ["true", "false"],
 
   "participant_name": "myfirstparticipant",
   "participant_name_slug": "{{ cookiecutter.participant_name.lower().replace(' ', '').replace('.', '').replace('-', '').replace('_', '') }}",
