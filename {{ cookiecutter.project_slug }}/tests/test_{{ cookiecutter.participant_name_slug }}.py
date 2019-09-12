@@ -57,7 +57,7 @@ async def test_scan_random_mal_not():
                               .get_random_file(malicious_filter=t)
         result = await scanner.scan(guid='nocare',
                                     artifact_type=ArtifactType.FILE,
-                                    content=mal_content,
+                                    content=ArtifactType.FILE.decode_content(mal_content),
                                     metadata=None,
                                     chain='home')
         assert result.bit
@@ -72,14 +72,14 @@ async def test_scan_random_mal_not():
     # Expect malicious
     url = b'http://iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com'
     result = await scanner.scan('nocare', ArtifactType.URL,
-                                url, None, 'home')
+                                ArtifactType.URL.decode_content(url), None, 'home')
     assert result.bit
     assert result.verdict
 
     # Except benign
     url = b'https://google.com'
     result = await scanner.scan('nocare', ArtifactType.URL,
-                                url, None, 'home')
+                                ArtifactType.URL.decode_content(url), None, 'home')
     assert result.bit
     assert not result.verdict
 
