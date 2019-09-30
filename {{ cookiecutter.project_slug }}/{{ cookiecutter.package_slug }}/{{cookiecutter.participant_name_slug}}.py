@@ -135,7 +135,7 @@ class {{ cookiecutter.participant_name_slug|title }}:
         Implement your URL Scan microengine
 
         Args:
-            content (bytes): binary content
+            content: string content
             metadata (object): metadata object
 
         Returns:
