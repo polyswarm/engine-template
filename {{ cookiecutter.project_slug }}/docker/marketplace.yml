@@ -1,39 +1,29 @@
 version: '2'
 services:
 
-  test_balancemanager_{{ cookiecutter.participant_name_slug }}:
+  balancemanager_{{ cookiecutter.participant_name_slug }}:
     image: "polyswarm/polyswarm-client:latest"
     environment:
       - PYTHONUNBUFFERED=1
-      - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
-      - PASSWORD=password
+    env_file:
+      - marketplace.env
     command:
-      - "dockerize"
-      - "-wait"
-      - "tcp://polyswarmd:31337"
-      - "-timeout"
-      - "1000s"
       - "balancemanager"
       - "deposit"
-      - "--polyswarmd-addr"
-      - "polyswarmd:31337"
-      - "--insecure-transport"
       - {% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "ambassador" %}"100000"{% endif %}{% if cookiecutter.participant_type == "arbiter" %}"10000000"{% endif %}
 
 {% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "arbiter" %}
 
-  test_{{ cookiecutter.participant_type }}-frontend_{{ cookiecutter.participant_name_slug }}:
+  {{ cookiecutter.participant_type }}-frontend_{{ cookiecutter.participant_name_slug }}:
     image: "polyswarm/polyswarm-client:latest"
     environment:
       - PYTHONUNBUFFERED=1
-      - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
-      - PASSWORD=password
       - REDIS_ADDR=redis:6379
       - QUEUE={{ cookiecutter.project_slug }}
+    env_file:
+      - marketplace.env
     command:
       - "dockerize"
-      - "-wait"
-      - "tcp://polyswarmd:31337"
       - "-wait"
       - "tcp://redis:6379"
       - "-timeout"
@@ -41,11 +31,6 @@ services:
       - "{{ cookiecutter.participant_type }}"
       - "--log"
       - "INFO"
-      - "--polyswarmd-addr"
-      - "polyswarmd:31337"
-      - "--insecure-transport"
-      - "--testing"
-      - "10"
       - "--backend"
       - "producer"
       - "--chains"
@@ -57,16 +42,16 @@ services:
 
 {% if cookiecutter.platform == "linux" %}
 
-  test_{{ cookiecutter.participant_type }}-worker_{{ cookiecutter.participant_name_slug }}:
+  {{ cookiecutter.participant_type }}-worker_{{ cookiecutter.participant_name_slug }}:
     image: "{{ cookiecutter.project_slug }}"
     environment:
       - PYTHONUNBUFFERED=1
       - REDIS_ADDR=redis:6379
       - QUEUE={{ cookiecutter.project_slug }}
+    env_file:
+      - marketplace.env
     command:
       - "dockerize"
-      - "-wait"
-      - "tcp://polyswarmd:31337"
       - "-wait"
       - "tcp://redis:6379"
       - "-timeout"
@@ -74,8 +59,6 @@ services:
       - "worker"
       - "--log"
       - "INFO"
-      - "--testing"
-      - "10"
       - "--backend"
       - "{{ cookiecutter.package_slug }}"
 
@@ -85,34 +68,26 @@ services:
 
 {% if cookiecutter.participant_type == "ambassador" %}
 
-  test_{{ cookiecutter.participant_name_slug }}:
+  {{ cookiecutter.participant_type }}-{{ cookiecutter.participant_name_slug }}:
     image: "{{ cookiecutter.project_slug }}"
     environment:
       - PYTHONUNBUFFERED=1
-      - KEYFILE=docker/{{ cookiecutter.participant_type}}_keyfile
-      - PASSWORD=password
+    env_file:
+      - marketplace.env
     command:
-      - "dockerize"
-      - "-wait"
-      - "tcp://polyswarmd:31337"
-      - "-timeout"
-      - "1000s"
       - "{{ cookiecutter.participant_type }}"
       - "--log"
       - "INFO"
-      - "--polyswarmd-addr"
-      - "polyswarmd:31337"
-      - "--insecure-transport"
-      - "--testing"
-      - "10"
       - "--chains"
       - "side"
       - "--backend"
       - "{{ cookiecutter.package_slug }}"
 
-{% endif -%}
+{% endif %}
 
-networks:
-  default:
-    external:
-      name: orchestration_default
+  redis:
+    image: "redis"
+    environment:
+    - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+    - "6379:6379"
