@@ -116,17 +116,6 @@ class {{ cookiecutter.participant_name_slug|title }}:
         Returns:
             ScanResult: Result of this scan
         """
-
-        # ScanResult Object:
-        #
-        # bit : a boolean representing a malicious or benign determination
-        # verdict: another boolean representing whether the engine wishes to assert on the artifact
-        # metadata: an object describing our scan results
-
-        # return ScanResult(bit=bit_variable,
-        #                   verdict=verdict_variable,
-        #                   metadata=metadata.json())
-
         raise NotImplementedError
 {% endif -%}
 {% if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" %}
@@ -141,17 +130,6 @@ class {{ cookiecutter.participant_name_slug|title }}:
         Returns:
             ScanResult: Result of this scan
         """
-
-        # ScanResult Object:
-        #
-        # bit : a boolean representing a malicious or benign determination
-        # verdict: another boolean representing whether the engine wishes to assert on the artifact
-        # metadata: an object describing our scan results
-
-        # return ScanResult(bit=bit_variable,
-        #                   verdict=verdict_variable,
-        #                   metadata=metadata.json())
-
         raise NotImplementedError
 {% endif %}
 
