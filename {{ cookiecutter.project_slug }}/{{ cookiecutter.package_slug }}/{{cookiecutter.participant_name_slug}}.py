@@ -35,9 +35,9 @@ import {{ cookiecutter.package_slug }}
 #         {% if cookiecutter.platform == "windows" %}"{{ cookiecutter.participant_name_slug }}.exe"){% endif %}
 #     )
 
-{% if cookiecutter.participant_type == "microengine" -%}
-
 logger = logging.getLogger(__name__)  # Init logger
+
+{% if cookiecutter.participant_type == "microengine" -%}
 
 class BidStrategy(BidStrategyBase):
     """
