@@ -16,13 +16,11 @@ from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
 
 {% if cookiecutter.participant_type == "microengine" -%}
 from polyswarmclient.bidstrategy import BidStrategyBase
-
-import {{ cookiecutter.package_slug }}
-
 {% endif -%}
 
 {% if cookiecutter.participant_type == "microengine" or
-      cookiecutter.participant_type == "arbiter" -%}
+      cookiecutter.participant_type == "arbiter" %}
+import {{ cookiecutter.package_slug }}
 
 # CUSTOMIZE_HERE
 # If your engine must call out to a scan engine binary, customize this path to match the location of that backend, e.g.:
@@ -37,9 +35,9 @@ import {{ cookiecutter.package_slug }}
 #         {% if cookiecutter.platform == "windows" %}"{{ cookiecutter.participant_name_slug }}.exe"){% endif %}
 #     )
 
-{% if cookiecutter.participant_type == "microengine" -%}
-
 logger = logging.getLogger(__name__)  # Init logger
+
+{% if cookiecutter.participant_type == "microengine" -%}
 
 class BidStrategy(BidStrategyBase):
     """
