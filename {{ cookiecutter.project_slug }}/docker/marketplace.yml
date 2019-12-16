@@ -1,6 +1,8 @@
 version: '2'
 services:
 
+{% if cookiecutter.participant_type == "arbiter" %}
+
   balancemanager_{{ cookiecutter.participant_name_slug }}:
     image: "polyswarm/polyswarm-client:latest"
     environment:
@@ -9,8 +11,27 @@ services:
       - marketplace.env
     command:
       - "balancemanager"
-      - "deposit"
-      - {% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "ambassador" %}"100000"{% endif %}{% if cookiecutter.participant_type == "arbiter" %}"10000000"{% endif %}
+      - "maintain"
+      - "1"
+      - "10000001"
+
+{% endif %}
+
+{% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "ambassador" %}
+
+  balancemanager_{{ cookiecutter.participant_name_slug }}:
+    image: "polyswarm/polyswarm-client:latest"
+    environment:
+      - PYTHONUNBUFFERED=1
+    env_file:
+      - marketplace.env
+    command:
+      - "balancemanager"
+      - "maintain"
+      - "10000"
+      - "10000"
+
+{% endif %}
 
 {% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "arbiter" %}
 
