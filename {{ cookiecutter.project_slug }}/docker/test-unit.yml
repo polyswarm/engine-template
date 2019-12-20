@@ -4,5 +4,5 @@ services:
   test_{{ cookiecutter.participant_name_slug }}:
     image: "{{ cookiecutter.project_slug }}"
     environment:
-      - PYTHON_UNBUFFERED=1
+      - PYTHONUNBUFFERED=1
     command: ["pytest", "-s", '--log-cli-level=INFO']
