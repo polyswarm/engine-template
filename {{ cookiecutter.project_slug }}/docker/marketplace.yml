@@ -9,11 +9,14 @@ services:
       - PYTHONUNBUFFERED=1
     env_file:
       - marketplace.env
+    volumes:
+      - "../keyfiles:/keyfiles:ro"
     command:
       - "balancemanager"
       - "maintain"
       - "1"
       - "10000001"
+    
 
 {% endif %}
 
@@ -25,6 +28,8 @@ services:
       - PYTHONUNBUFFERED=1
     env_file:
       - marketplace.env
+    volumes:
+      - "../keyfiles:/keyfiles:ro"
     command:
       - "balancemanager"
       - "maintain"
@@ -43,6 +48,8 @@ services:
       - QUEUE={{ cookiecutter.project_slug }}
     env_file:
       - marketplace.env
+    volumes:
+      - "../keyfiles:/keyfiles:ro"
     command:
       - "dockerize"
       - "-wait"
@@ -95,6 +102,8 @@ services:
       - PYTHONUNBUFFERED=1
     env_file:
       - marketplace.env
+    volumes:
+      - "../keyfiles:/keyfiles:ro"
     command:
       - "{{ cookiecutter.participant_type }}"
       - "--log"
@@ -103,6 +112,7 @@ services:
       - "side"
       - "--backend"
       - "{{ cookiecutter.package_slug }}"
+    
 
 {% endif %}
 
