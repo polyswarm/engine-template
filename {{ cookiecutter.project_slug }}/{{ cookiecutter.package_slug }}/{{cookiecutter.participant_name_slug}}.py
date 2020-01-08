@@ -153,11 +153,12 @@ class Scanner(AbstractScanner):
             guid (str): GUID of the bounty under analysis, use to track artifacts in the same bounty
             artifact_type (ArtifactType): Artifact type for the bounty
             content (bytes): Content of the artifact to be scan
+            metadata (dict): Metadata from polyswarm client about filetype, hash, etc
             chain (str): Chain we are operating on
         Returns:
             ScanResult: Result of this scan
         """
-        metadata = Verdict().set_malware_family('')\
+        verdict_metadata = Verdict().set_malware_family('')\
                             .set_scanner(operating_system=platform.system(),
                                          architecture=platform.machine(),
                                          vendor_version='',
@@ -175,7 +176,7 @@ class Scanner(AbstractScanner):
 {% endif %}
         # Not supported artifact
         logger.error('Invalid artifact_type. Skipping bounty.')
-        return ScanResult(metadata=metadata.json())
+        return ScanResult(metadata=verdict_metadata.json())
 {% endif -%}
 
 {% if cookiecutter.participant_type == "ambassador" -%}
