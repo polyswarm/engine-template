@@ -8,18 +8,16 @@ import os
 from polyswarmartifact import ArtifactType
 from polyswarmartifact.schema.verdict import Verdict
 
-{% if cookiecutter.participant_type == "microengine" or
-      cookiecutter.participant_type == "arbiter" -%}
+{% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "arbiter" -%}
 
-from polyswarmclient.abstractscanner import AbstractScanner, ScanResult, ScanMode
+    from polyswarmclient.abstractscanner import AbstractScanner, ScanResult, ScanMode
 {% endif -%}
 
 {% if cookiecutter.participant_type == "microengine" -%}
-from polyswarmclient.bidstrategy import BidStrategyBase
+    from polyswarmclient.bidstrategy import BidStrategyBase
 {% endif -%}
 
-{% if cookiecutter.participant_type == "microengine" or
-      cookiecutter.participant_type == "arbiter" %}
+{% if cookiecutter.participant_type == "microengine" or cookiecutter.participant_type == "arbiter" %}
 import {{ cookiecutter.package_slug }}
 
 # CUSTOMIZE_HERE
@@ -37,8 +35,8 @@ import {{ cookiecutter.package_slug }}
 
 logger = logging.getLogger(__name__)  # Init logger
 
-{% if cookiecutter.participant_type == "microengine" -%}
 
+{% if cookiecutter.participant_type == "microengine" -%}
 class BidStrategy(BidStrategyBase):
     """
     Microengine developers may subclass BidStrategyBase to modify default bid logic paramters or implement fully custom bidding (staking) logic.
@@ -82,12 +80,14 @@ class BidStrategy(BidStrategyBase):
 
 {% endif -%}
 
-{% if cookiecutter.participant_type == "microengine" or
-      cookiecutter.participant_type == "arbiter" %}
-
 class Scanner(AbstractScanner):
     def __init__(self):
+        {% if cookiecutter.microengine_arbiter__scan_mode == "async" -%}
         super(Scanner, self).__init__(ScanMode.ASYNC)
+        {%  elif cookiecutter.microengine_arbiter__scan_mode == "sync" -%}
+        super(Scanner, self).__init__(ScanMode.SYNC)
+        {% endif -%}
+
         self.{{ cookiecutter.participant_name_slug }} = {{ cookiecutter.participant_name_slug|title }}()
 
     async def setup(self):
@@ -100,7 +100,11 @@ class Scanner(AbstractScanner):
         """
         return await self.{{ cookiecutter.participant_name_slug }}.setup()
 
-    async def scan_sync(self, guid, artifact_type, content, metadata, chain):
+    {% if cookiecutter.microengine_arbiter__scan_mode == "async" -%}
+    async def scan_async(self, guid, artifact_type, content, metadata, chain):
+    {% elif cookiecutter.microengine_arbiter__scan_mode == "sync" -%}
+    def scan_sync(self, guid, artifact_type, content, metadata, chain):
+    {%- endif %}
         """
         Args:
             guid (str): GUID of the bounty under analysis, use to track artifacts in the same bounty
@@ -112,24 +116,34 @@ class Scanner(AbstractScanner):
             ScanResult: Result of this scan
         """
         verdict_metadata = Verdict().set_malware_family('')\
-                            .set_scanner(operating_system=platform.system(),
-                                         architecture=platform.machine(),
-                                         vendor_version='',
-                                         version={{ cookiecutter.package_slug }}.__version__)
+                                    .set_scanner(operating_system=platform.system(),
+                                                 architecture=platform.machine(),
+                                                 vendor_version='',
+                                                 version={{ cookiecutter.package_slug }}.__version__)
 
-{% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" %}
+        {% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" -%}
         # File Scan
         if artifact_type == ArtifactType.FILE:
-            return await self.{{ cookiecutter.participant_name_slug }}.file_scan(content, metadata)
-{% endif -%}
-{% if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" %}
+            {% if cookiecutter.microengine_arbiter__scan_mode == "async" -%}
+            return await self.{{ cookiecutter.participant_name_slug }}.file_scan(content, verdict_metadata)
+            {% elif cookiecutter.microengine_arbiter__scan_mode == "sync" -%}
+            return self.{{cookiecutter.participant_name_slug}}.file_scan(content, verdict_metadata)
+            {% endif -%}
+        {%- endif %}
+
+        {%+ if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" -%}
         # URL Scan
         if artifact_type == ArtifactType.URL:
-            return await self.{{ cookiecutter.participant_name_slug }}.url_scan(content, metadata)
-{% endif %}
+            {% if cookiecutter.microengine_arbiter__scan_mode == "async" -%}
+            return await self.{{cookiecutter.participant_name_slug}}.url_scan(content, verdict_metadata)
+            {% elif cookiecutter.microengine_arbiter__scan_mode == "sync" -%}
+            return self.{{cookiecutter.participant_name_slug}}.url_scan(content, verdict_metadata)
+            {% endif -%}
+{%- endif %}
+
         # Not supported artifact
         logger.error('Invalid artifact_type. Skipping bounty.')
-        return ScanResult(metadata=verdict_metadata.json())
+        return ScanResult()
 
 
 class {{ cookiecutter.participant_name_slug|title }}:
@@ -147,46 +161,54 @@ class {{ cookiecutter.participant_name_slug|title }}:
         Returns:
             status (bool): Did setup complete successfully?
         """
-
         # CUSTOMIZE_HERE
         # If your participant requires time to, e.g. connect to an external service before it can process requests,
         # check for the availability of the service here. Return True when ready, False if there's an error.
         return True
-{% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" %}
-    async def file_scan(self, content, metadata):
+
+    {% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" -%}
+    {% if cookiecutter.microengine_arbiter__scan_mode == "async" -%}
+    async def file_scan(self, content, verdict_metadata):
+    {% elif cookiecutter.microengine_arbiter__scan_mode == "sync" -%}
+    def file_scan(self, content, verdict_metadata):
+    {%- endif %}
         """
         Implement your File Scan microengine
 
         Args:
             content (bytes): binary content
-            metadata (object): metadata object
+            verdict_metadata (Verdict): metadata object
 
         Returns:
             ScanResult: Result of this scan
         """
         raise NotImplementedError
-{% endif -%}
-{% if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" %}
-    async def url_scan(self, content, metadata):
+    {%- endif %}
+
+    {%+ if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" -%}
+    {% if cookiecutter.microengine_arbiter__scan_mode == "async" -%}
+    async def url_scan(self, content, verdict_metadata):
+    {% elif cookiecutter.microengine_arbiter__scan_mode == "sync" -%}
+    def url_scan(self, content, verdict_metadata):
+    {%- endif %}
         """
         Implement your URL Scan microengine
 
         Args:
             content: string content
-            metadata (object): metadata object
+            verdict_metadata (Verdict): metadata object
 
         Returns:
             ScanResult: Result of this scan
         """
         raise NotImplementedError
-{% endif %}
+    {%- endif -%}
 
 
 {% elif cookiecutter.participant_type == "ambassador" -%}
-
 from polyswarmclient.abstractambassador import AbstractAmbassador
 
-BOUNTY_TEST_DURATION_BLOCKS = int(os.getenv('BOUNTY_TEST_DURATION_BLOCKS', 5))
+BOUNTY_TEST_DURATION_BLOCKS = int(os.getenv('BOUNTY_TEST_DURATION_BLOCKS', 15))
 
 
 class Ambassador(AbstractAmbassador):
@@ -218,4 +240,4 @@ class Ambassador(AbstractAmbassador):
         # This is where you implement your ambassador's bounty generation logic.
         raise NotImplementedError
 
-{% endif -%}
+{%- endif %}
