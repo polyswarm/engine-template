@@ -1,6 +1,7 @@
 {
   "participant_type": ["microengine", "ambassador", "arbiter"],
   "platform": ["linux", "windows"],
+  "microengine_arbiter__scan_mode": ["sync", "async"],
   "microengine_arbiter__supports_scanning_files": ["true", "false"],
   "microengine_arbiter__supports_scanning_urls": ["true", "false"],
 
