@@ -29,9 +29,9 @@ def event_loop():
     :return: event loop object
     """
     if sys.platform == 'win32':
-        loop = asyncio.ProactorEventLoop()
-    else:
-        loop = asyncio.get_event_loop()
+        asyncio.set_event_loop(asyncio.ProactorEventLoop())
+
+    loop = asyncio.get_event_loop()
     yield loop
     loop.close()
 
