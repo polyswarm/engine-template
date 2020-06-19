@@ -11,7 +11,7 @@ from polyswarmartifact.schema.verdict import Verdict
 {% if cookiecutter.participant_type == "microengine" or
       cookiecutter.participant_type == "arbiter" -%}
 
-from polyswarmclient.abstractscanner import AbstractScanner, ScanResult
+from polyswarmclient.abstractscanner import AbstractScanner, ScanResult, ScanMode
 {% endif -%}
 
 {% if cookiecutter.participant_type == "microengine" -%}
@@ -82,6 +82,56 @@ class BidStrategy(BidStrategyBase):
 
 {% endif -%}
 
+{% if cookiecutter.participant_type == "microengine" or
+      cookiecutter.participant_type == "arbiter" %}
+
+class Scanner(AbstractScanner):
+    def __init__(self):
+        super(Scanner, self).__init__(ScanMode.ASYNC)
+        self.{{ cookiecutter.participant_name_slug }} = {{ cookiecutter.participant_name_slug|title }}()
+
+    async def setup(self):
+        """
+        Override this method to implement custom setup logic.
+        This is run by arbiters and microengines after the Scanner class is instantiated and before any calls to the scan() method.
+
+        Returns:
+            status (bool): Did setup complete successfully?
+        """
+        return await self.{{ cookiecutter.participant_name_slug }}.setup()
+
+    async def scan_sync(self, guid, artifact_type, content, metadata, chain):
+        """
+        Args:
+            guid (str): GUID of the bounty under analysis, use to track artifacts in the same bounty
+            artifact_type (ArtifactType): Artifact type for the bounty
+            content (bytes): Content of the artifact to be scan
+            metadata (dict): Metadata from polyswarm client about filetype, hash, etc
+            chain (str): Chain we are operating on
+        Returns:
+            ScanResult: Result of this scan
+        """
+        verdict_metadata = Verdict().set_malware_family('')\
+                            .set_scanner(operating_system=platform.system(),
+                                         architecture=platform.machine(),
+                                         vendor_version='',
+                                         version={{ cookiecutter.package_slug }}.__version__)
+
+{% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" %}
+        # File Scan
+        if artifact_type == ArtifactType.FILE:
+            return await self.{{ cookiecutter.participant_name_slug }}.file_scan(content, metadata)
+{% endif -%}
+{% if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" %}
+        # URL Scan
+        if artifact_type == ArtifactType.URL:
+            return await self.{{ cookiecutter.participant_name_slug }}.url_scan(content, metadata)
+{% endif %}
+        # Not supported artifact
+        logger.error('Invalid artifact_type. Skipping bounty.')
+        return ScanResult(metadata=verdict_metadata.json())
+
+
 class {{ cookiecutter.participant_name_slug|title }}:
     """
     CUSTOMIZE_HERE
@@ -131,55 +181,8 @@ class {{ cookiecutter.participant_name_slug|title }}:
         raise NotImplementedError
 {% endif %}
 
-class Scanner(AbstractScanner):
 
-    def __init__(self):
-        super(Scanner, self).__init__()
-        self.{{ cookiecutter.participant_name_slug }} = {{ cookiecutter.participant_name_slug|title }}()
-
-    async def setup(self):
-        """
-        Override this method to implement custom setup logic.
-        This is run by arbiters and microengines after the Scanner class is instantiated and before any calls to the scan() method.
-
-        Returns:
-            status (bool): Did setup complete successfully?
-        """
-        return await self.{{ cookiecutter.participant_name_slug }}.setup()
-
-    async def scan(self, guid, artifact_type, content, metadata, chain):
-        """
-        Args:
-            guid (str): GUID of the bounty under analysis, use to track artifacts in the same bounty
-            artifact_type (ArtifactType): Artifact type for the bounty
-            content (bytes): Content of the artifact to be scan
-            metadata (dict): Metadata from polyswarm client about filetype, hash, etc
-            chain (str): Chain we are operating on
-        Returns:
-            ScanResult: Result of this scan
-        """
-        verdict_metadata = Verdict().set_malware_family('')\
-                            .set_scanner(operating_system=platform.system(),
-                                         architecture=platform.machine(),
-                                         vendor_version='',
-                                         version={{ cookiecutter.package_slug }}.__version__)
-
-{% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" %}
-        # File Scan
-        if artifact_type == ArtifactType.FILE:
-            return await self.{{ cookiecutter.participant_name_slug }}.file_scan(content, metadata)
-{% endif -%}
-{% if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" %}
-        # URL Scan
-        if artifact_type == ArtifactType.URL:
-            return await self.{{ cookiecutter.participant_name_slug }}.url_scan(content, metadata)
-{% endif %}
-        # Not supported artifact
-        logger.error('Invalid artifact_type. Skipping bounty.')
-        return ScanResult(metadata=verdict_metadata.json())
-{% endif -%}
-
-{% if cookiecutter.participant_type == "ambassador" -%}
+{% elif cookiecutter.participant_type == "ambassador" -%}
 
 from polyswarmclient.abstractambassador import AbstractAmbassador
 
