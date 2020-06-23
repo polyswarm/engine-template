@@ -1,6 +1,13 @@
 version: '2'
 services:
 
+  redis:
+    image: "redis"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - "6379:6379"
+
 {% if cookiecutter.participant_type == "arbiter" %}
 
   balancemanager_{{ cookiecutter.participant_name_slug }}:
@@ -46,6 +53,8 @@ services:
       - PYTHONUNBUFFERED=1
       - REDIS_ADDR=redis:6379
       - QUEUE={{ cookiecutter.project_slug }}
+    depends_on:
+      - redis
     env_file:
       - marketplace.env
     volumes:
@@ -76,6 +85,8 @@ services:
       - PYTHONUNBUFFERED=1
       - REDIS_ADDR=redis:6379
       - QUEUE={{ cookiecutter.project_slug }}
+    depends_on:
+      - redis
     env_file:
       - marketplace.env
     command:
@@ -115,10 +126,3 @@ services:
     
 
 {% endif %}
-
-  redis:
-    image: "redis"
-    environment:
-    - ALLOW_EMPTY_PASSWORD=yes
-    ports:
-    - "6379:6379"
