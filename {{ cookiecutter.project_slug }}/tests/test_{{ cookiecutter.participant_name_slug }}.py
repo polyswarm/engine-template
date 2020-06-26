@@ -16,7 +16,7 @@ from {{ cookiecutter.package_slug }} import Scanner
 from polyswarmartifact import ArtifactType
 
 
-@pytest.yield_fixture('session')
+@pytest.yield_fixture(scope='session')
 def event_loop():
     """
     To enable Windows engines to support subprocesses in asyncio, they need to use the ProactorEventLoop.
