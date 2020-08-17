@@ -100,6 +100,15 @@ class Scanner(AbstractScanner):
         """
         return await self.{{ cookiecutter.participant_name_slug }}.setup()
 
+    async def teardown(self):
+        """
+        Override this method to do any cleanup when the scanner is being shut down.
+
+        This can be called multiple times, due to exception handling restarting the worker/microengine/arbiter
+        There is an expectation that calling `setup()` again will put the AbstractScanner implementation back into working order
+        """
+        await self.{{ cookiecutter.participant_name_slug }}.teardown()
+
     {% if cookiecutter.microengine_arbiter__scan_mode == "async" -%}
     async def scan_async(self, guid, artifact_type, content, metadata, chain):
     {% elif cookiecutter.microengine_arbiter__scan_mode == "sync" -%}
@@ -165,6 +174,15 @@ class {{ cookiecutter.participant_name_slug|title }}:
         # If your participant requires time to, e.g. connect to an external service before it can process requests,
         # check for the availability of the service here. Return True when ready, False if there's an error.
         return True
+
+    async def teardown(self):
+        """
+        Override this method to implement custom teardown logic.
+        """
+        # CUSTOMIZE_HERE
+        # If your participant leaves long running connections, or uses other long running resources, clean them up here
+        # Be aware, setup may be called after teardown due to polyswarm-client's backoff logic
+        pass
 
     {% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" -%}
     {% if cookiecutter.microengine_arbiter__scan_mode == "async" -%}

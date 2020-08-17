@@ -47,42 +47,51 @@ async def test_scan_random_mal_not():
 {% endif %}
     """
     scanner = Scanner()
-    await scanner.setup()
+    async with scanner:
 {% if cookiecutter.microengine_arbiter__supports_scanning_files == "true" %}
-    ###
-    ### File artifacts
-    ###
+        ###
+        ### File artifacts
+        ###
 
-    for t in [True, False]:
-        mal_md, mal_content = DummyMalwareRepoClient()\
-                              .get_random_file(malicious_filter=t)
-        result = await scanner.scan(guid='nocare',
-                                    artifact_type=ArtifactType.FILE,
-                                    content=ArtifactType.FILE.decode_content(mal_content),
-                                    metadata=None,
-                                    chain='home')
-        assert result.bit
-        assert result.verdict == t
+        for t in [True, False]:
+            mal_md, mal_content = DummyMalwareRepoClient()\
+                                  .get_random_file(malicious_filter=t)
+            result = await scanner.scan(guid='nocare',
+                                        artifact_type=ArtifactType.FILE,
+                                        content=ArtifactType.FILE.decode_content(mal_content),
+                                        metadata=None,
+                                        chain='home')
+            assert result.bit
+            assert result.verdict == t
 {% endif -%}
 
 {% if cookiecutter.microengine_arbiter__supports_scanning_urls == "true" %}
-    ###
-    ### URL artifacts
-    ###
+        ###
+        ### URL artifacts
+        ###
 
-    # Expect malicious
-    url = b'http://iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com'
-    result = await scanner.scan('nocare', ArtifactType.URL,
-                                ArtifactType.URL.decode_content(url), None, 'home')
-    assert result.verdict
+        # Expect malicious
+        url = b'http://iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com'
+        result = await scanner.scan('nocare', ArtifactType.URL,
+                                    ArtifactType.URL.decode_content(url), None, 'home')
+        assert result.verdict
 
-    # Except benign
-    url = b'https://google.com'
-    result = await scanner.scan('nocare', ArtifactType.URL,
-                                ArtifactType.URL.decode_content(url), None, 'home')
-    assert not result.verdict
+        # Except benign
+        url = b'https://google.com'
+        result = await scanner.scan('nocare', ArtifactType.URL,
+                                    ArtifactType.URL.decode_content(url), None, 'home')
+        assert not result.verdict
 
 {%- endif -%}
+
+@pytest.mark.asyncio
+async def test_setup_teardown_multiple_times():
+    scanner = Scanner()
+    await scanner.setup()
+    await scanner.setup()
+    await scanner.teardown()
+    await scanner.teardown()
+    await scanner.setup()
 
 {%- endif -%}
 
